@@ -1,6 +1,6 @@
 package com.elolozone.trafficstore;
 
-import com.google.appengine.api.datastore.Key;
+
 import com.elolozone.constants.Geo;
 import java.util.Date;
 import java.util.List;
@@ -12,16 +12,17 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
+import org.datanucleus.jpa.annotations.Extension;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 
 
 public class Bouchon {
 	  
 	
-
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
+	@Persistent 
+	@Extension(vendorName = "datanucleus", key = "gae.pk-id", value = "true") 
+	private String key;
 
 	@Unique
 	@Persistent
@@ -31,7 +32,7 @@ public class Bouchon {
 	
 	@Unique
 	@Persistent
-	 private Key prevKey;
+	 private String prevKey;
 
 	@Unique
 	@Persistent
@@ -58,7 +59,7 @@ public class Bouchon {
 		
 	}
 
-	public Key getKey() {
+	public String getKey() {
 		return key;
 	}
 	

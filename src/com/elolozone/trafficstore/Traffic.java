@@ -1,6 +1,5 @@
 package com.elolozone.trafficstore;
 
-import com.google.appengine.api.datastore.Key;
 
 import java.util.Date;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -10,15 +9,21 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
+import org.datanucleus.jpa.annotations.Extension;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 
 
 public class Traffic {
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
 
+	@Persistent 
+	@Extension(vendorName = "datanucleus", key = "gae.pk-id", value = "true") 
+	private String key;
+
+
+	
+	
 	 @Persistent
 	 private String idUser;
 	 
@@ -50,7 +55,7 @@ public class Traffic {
 			
 		}
 
-		public Key getKey() {
+		public String getKey() {
 			return key;
 		}
 	 

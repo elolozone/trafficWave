@@ -1,6 +1,5 @@
 package com.elolozone.trafficstore;
 
-import com.google.appengine.api.datastore.Key;
 import com.elolozone.constants.Geo;
 import java.util.Date;
 import java.util.List;
@@ -12,16 +11,17 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
+import org.datanucleus.jpa.annotations.Extension;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 
 
 public class GlobalTrace { 
 	  
 	
-
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
+	@Persistent 
+	@Extension(vendorName = "datanucleus", key = "gae.pk-id", value = "true") 
+	private String key;
 
 	 public enum Day {
 		    SUNDAY, MONDAY, TUESDAY, WEDNESDAY, 
@@ -93,7 +93,7 @@ public class GlobalTrace {
 	public void setLastLocationDate(Date lastLocationDate) {this.lastLocationDate = lastLocationDate;}
 	
 	
-	public Key getKey() {
+	public String getKey() {
 		return key;
 	}
 

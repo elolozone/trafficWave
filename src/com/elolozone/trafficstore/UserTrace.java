@@ -1,6 +1,6 @@
 package com.elolozone.trafficstore;
 
-import com.google.appengine.api.datastore.Key;
+
 
 import java.util.Date;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -9,14 +9,16 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.datanucleus.jpa.annotations.Extension;
+
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 
 
 public class UserTrace {
 
-	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key key;
+	@Persistent 
+	@Extension(vendorName = "datanucleus", key = "gae.pk-id", value = "true") 
+	private String key;
  
 	 
 	 @Persistent
@@ -77,7 +79,7 @@ public class UserTrace {
 	public void setLastIdSession(Integer lastIdSession) {  this.lastIdSession=lastIdSession;}
 	public void setLastConnectionTime(Date lastConnectionTime) {  this.lastConnectionTime=lastConnectionTime;}
 	
-	public Key getKey() {
+	public String getKey() {
 		return key;
 	}
 
