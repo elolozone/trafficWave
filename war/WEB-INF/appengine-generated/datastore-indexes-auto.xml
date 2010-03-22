@@ -1,0 +1,71 @@
+<!-- Indices written at Wed, 24 Feb 2010 12:17:43 UTC -->
+
+<datastore-indexes>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="UserStat" ancestor="false" source="auto">
+        <property name="idSession" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+    <datastore-index kind="UserStat" ancestor="false" source="auto">
+        <property name="idSession" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+<datastore-index kind="UserStat" ancestor="false" source="auto">
+        <property name="idSession" direction="asc"/>
+        <property name="idUser" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+    
+     <datastore-index kind="UserStat" ancestor="false" source="auto">
+        <property name="idUser" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+    
+  <datastore-index kind="UserStat" ancestor="false" source="manual"> 
+        <property name="idUser" direction="asc"/>
+        <property name="lastLocation" direction="asc"/>
+        <property name="lastLocationDate" direction="desc"/>
+    </datastore-index>
+    
+    <datastore-index kind="UserStat" ancestor="false" source="auto">
+        <property name="idUser" direction="asc"/>
+        <property name="posLa" direction="desc"/>
+        <property name="posLo" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+    
+     <datastore-index kind="UserStat" ancestor="false" source="auto">
+        <property name="idSession" direction="asc"/>
+        <property name="idUser" direction="asc"/>
+        <property name="lastLocation" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+     <datastore-index kind="UserStat" ancestor="false" source="manual">
+        <property name="idSession" direction="asc"/>
+        <property name="idUser" direction="asc"/>
+        <property name="prevKey" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+    
+    <datastore-index kind="UserStat" ancestor="false" source="manual">
+        <property name="idSession" direction="asc"/>
+        <property name="prevKey" direction="asc"/>
+         <property name="idUser" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+
+     <datastore-index kind="UserStat" ancestor="false" source="manual">
+        <property name="idSession" direction="asc"/>
+        <property name="prevKey" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+    <datastore-index kind="UserStat" ancestor="false" source="manual">
+        <property name="idUser" direction="asc"/>
+        <property name="prevKey" direction="asc"/>
+        <property name="lastLocationDate" direction="asc"/>
+    </datastore-index>
+     
+    
+    
+</datastore-indexes>
