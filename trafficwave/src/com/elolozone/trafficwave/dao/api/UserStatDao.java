@@ -1,5 +1,7 @@
 package com.elolozone.trafficwave.dao.api;
 
+import java.util.List;
+
 import com.elolozone.trafficwave.model.UserStat;
 
 /**
@@ -9,4 +11,10 @@ import com.elolozone.trafficwave.model.UserStat;
 public interface UserStatDao extends GenericDao<UserStat, String> {
 
 	int deleteAll();
+	
+	List<UserStat> findBySessionAndUser(int sessionId, String userId);
+	
+	List<UserStat> findUserInTraffic(int activeUserSec, int mockTime);
+	
+	List<UserStat> findAll(String orderedProperty, boolean asc);
 }

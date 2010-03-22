@@ -10,14 +10,16 @@ import java.util.Map.Entry;
 import javax.ws.rs.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.elolozone.constants.Geo;
 import com.elolozone.trafficstore.GlobalTrace;
 import com.elolozone.trafficstore.ToStore;
 import com.elolozone.trafficstore.UserStat;
-import com.elolozone.trafficstore.UserTrace;
 import com.elolozone.trafficwave.constants.IConstants;
+import com.elolozone.trafficwave.manager.api.GlobalTraceManager;
+import com.elolozone.trafficwave.manager.api.UserStatManager;
 import com.elolozone.trafficwave.manager.api.UserTraceManager;
 import com.elolozone.trafficwave.model.Location;
 import com.elolozone.trafficwave.ws.api.TrafficService;
@@ -30,9 +32,12 @@ import com.elolozone.trafficwave.ws.api.TrafficService;
  */
 @Path("/traffic")
 @Component
+@Scope("singleton")
 public class TrafficServiceImpl implements TrafficService {
 
+	private GlobalTraceManager globalTraceManager;
 	private UserTraceManager userTraceManager;
+	private UserStatManager userStatManager;
 	
 	/**
 	 * Hold current users location.
@@ -43,7 +48,8 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getNews(String userId) {
-		UserTrace userTrace = ToStore.storeOne(new UserTrace(userId));
+		com.elolozone.trafficwave.model.UserTrace userTrace = new com.elolozone.trafficwave.model.UserTrace(userId);
+		this.getUserTraceManager().save(userTrace);
 		
 		return 
 				"\n\nActuellement : "+String.valueOf(locations.size()) + " utilisateurs connectes."+
@@ -57,13 +63,13 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getPaths(String userId, int sessionId) {
-		Collection<UserStat>  userStats = ToStore.listUserStatAsc(sessionId, userId); 
+		List<com.elolozone.trafficwave.model.UserStat> userStats = this.getUserStatManager().findBySessionAndUser(sessionId, userId); 
 		
 		if (userStats != null)  {
 			StringBuilder sb = new StringBuilder();
 			
-			for (UserStat userStat : userStats) {
-				sb.append(userStat.getPosLa()).append(',').append(userStat.getPosLo()).append('\n');
+			for (com.elolozone.trafficwave.model.UserStat userStat : userStats) {
+				sb.append(userStat.getLatitude()).append(',').append(userStat.getLongitude()).append('\n');
 			}
 			
 			return sb.toString();
@@ -76,21 +82,21 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String identifyTrafficJob() {
-		Collection<UserStat> userStats = ToStore.listUserInTraffic(IConstants.ACTIF_USER_MAX_SEC, IConstants.DUREE_TODECLARE_BOUCHON_SEC);
+		List<com.elolozone.trafficwave.model.UserStat> userStats = this.getUserStatManager().findUserInTraffic(IConstants.ACTIF_USER_MAX_SEC, IConstants.DUREE_TODECLARE_BOUCHON_SEC);
 
 		if (userStats != null) {
 			
 			StringBuilder sb = new StringBuilder();
 			
-			for (UserStat userStat : userStats) {
+			for (com.elolozone.trafficwave.model.UserStat userStat : userStats) {
 				Location location =  locations.get(userStat.getIdUser());
 				
 				sb.append(userStat.getIdUser()).append(',').
 					append(userStat.getLastLocationDate()).append(',').
 					append(userStat.getInTrafficDeclaredTime()).append(',').
 					append(userStat.getPoleDirection()).append(',').
-					append(userStat.getPosLa()).append(',').
-					append(userStat.getPosLo()).append(',').
+					append(userStat.getLatitude()).append(',').
+					append(userStat.getLongitude()).append(',').
 					append(userStat.getSpeed()).append(',').
 					append((new Date().getTime() - userStat.getInTrafficDeclaredTime().getTime()) / 1000);
 				
@@ -120,7 +126,7 @@ public class TrafficServiceImpl implements TrafficService {
 			return "";
 		
 		//TODO : nombre de jours historique des itinéraires
-		Collection<UserStat> userStats = ToStore.listUserDestination(60*60*24*30, userId,Double.valueOf(actualLocation.getPosLa()),Double.valueOf(actualLocation.getPosLo()));
+		Collection<UserStat> userStats = ToStore.listUserDestination(60*60*24*30, userId, actualLocation.getLatitude(), actualLocation.getLongitude());
 
 		if (userStats != null) 
 		{
@@ -153,12 +159,12 @@ public class TrafficServiceImpl implements TrafficService {
 	public String listGlobalTrace() {
 		StringBuilder sb = new StringBuilder();
 		
-		List<GlobalTrace> globalTraces = ToStore.listGlobalTrace();
+		List<com.elolozone.trafficwave.model.GlobalTrace> globalTraces = this.getGlobalTraceManager().findAll();
 		
-		for (GlobalTrace globalTrace : globalTraces) {
+		for (com.elolozone.trafficwave.model.GlobalTrace globalTrace : globalTraces) {
 
-			sb.append(globalTrace.getPosLa()).append(',').
-				append(globalTrace.getPosLo()).append(',').
+			sb.append(globalTrace.getLatitude()).append(',').
+				append(globalTrace.getLongitude()).append(',').
 				append(globalTrace.getSumSpeed()).append(',').
 				append(globalTrace.getNbUser()).append(',').
 				append(globalTrace.getPoleDirection()).append(',').
@@ -174,17 +180,17 @@ public class TrafficServiceImpl implements TrafficService {
 	public String listUserStat() {
 		StringBuilder sb = new StringBuilder("Latitude,Longitude,maxSpeed,Ratio,RatioPond,AvgSpeed,time,surfDiff,surfVmoy,idUser,speed,umSurfVmoy\n");
 		
-		List<UserStat> userStats = ToStore.listUserStat();
+		List<com.elolozone.trafficwave.model.UserStat> userStats = this.getUserStatManager().findAllAndOrderBy("lastLocationDate", Boolean.FALSE);
 		
-		for (UserStat userStat : userStats) {
-			sb.append(userStat.getPosLa()).append(',').
-				append(userStat.getPosLo()).append(',').
+		for (com.elolozone.trafficwave.model.UserStat userStat : userStats) {
+			sb.append(userStat.getLatitude()).append(',').
+				append(userStat.getLongitude()).append(',').
 				append(userStat.getMaxSpeed()).append(',').
 				append(userStat.getRatio()).append(',').
 				append(userStat.getRatioPond()).append(',').
 				append(userStat.getAvgSpeed()).append(',').
 				append(userStat.getLastLocationDate().getTime()).append(',').
-				append(userStat.getSurDiff()).append(',').
+				append(userStat.getSurfDiff()).append(',').
 				append(userStat.getSurfVmoy()).append(',').
 				append(userStat.getIdUser()).append(',').
 				append(userStat.getSpeed()).append(',').
@@ -227,10 +233,7 @@ public class TrafficServiceImpl implements TrafficService {
 		for (Entry<String, Location> entry : locations.entrySet()) {
 			Location loc = entry.getValue();
 
-			Double dposLai = Double.parseDouble(loc.getPosLa()) ; 
-			Double dposLoi = Double.parseDouble(loc.getPosLo()) ;
-
-			GlobalTrace globalTrace = ToStore.getAverageSpot (dposLoi, dposLai, Double.valueOf(loc.getCourse()));
+			GlobalTrace globalTrace = ToStore.getAverageSpot (loc.getLongitude(), loc.getLatitude(), loc.getCourse());
 			
 			if (globalTrace != null) {
 				Double vitMax = globalTrace.getMaxSpeed() * 3.6f;
@@ -239,7 +242,7 @@ public class TrafficServiceImpl implements TrafficService {
 				if (vit < vitMax) {
 					Double ratioV = vit / vitMax * 100.0f;
 					
-					sb.append(loc.getPosLa()).append(',').append(loc.getPosLo()).append(',').append(ratioV).append('&');
+					sb.append(loc.getLatitude()).append(',').append(loc.getLongitude()).append(',').append(ratioV).append('&');
 				} 
 			} 
 		}
@@ -250,13 +253,13 @@ public class TrafficServiceImpl implements TrafficService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String sendPositionOnly(String id, String longitude, String latitude, String speed, String course, String street,
+	public String sendPositionOnly(String id, double longitude, double latitude, double speed, double course, String street,
 			int idSession, String postalCode, String traffic) {
 		Location location = new Location();
 
 		location.setIdUser(id);
-		location.setPosLo(longitude);
-		location.setPosLa(latitude);
+		location.setLongitude(longitude);
+		location.setLatitude(latitude);
 		location.setSpeed(speed);
 		location.setCourse(course);
 		location.setStreet(street) ;
@@ -266,7 +269,7 @@ public class TrafficServiceImpl implements TrafficService {
 
 		UserStat userStat = null;
 		
-		if (location.getIdUser() != null && location.getPosLa() != null && location.getPosLo() != null && location.getSpeed() != null && location.getCourse() != null)     
+		if (location.getIdUser() != null && location.getLatitude() != null && location.getLongitude() != null && location.getSpeed() != null && location.getCourse() != null)     
 		{
 			Location previousL = locations.get(location.getIdUser());
 		    
@@ -276,10 +279,10 @@ public class TrafficServiceImpl implements TrafficService {
 
 			locations.put(location.getIdUser(), location);
 
-			Geo.Direction direction =  ToStore.getDirection(Double.valueOf(location.getCourse()));
+			Geo.Direction direction =  ToStore.getDirection(location.getCourse());
 
 			//  on récupére la vitesse moyenne et max et on enregistre la position
-			GlobalTrace globalTraceAvgSport = ToStore.getAverageSpot (Double.valueOf(location.getPosLo()), Double.valueOf(location.getPosLa()), Double.valueOf(location.getCourse()));
+			GlobalTrace globalTraceAvgSport = ToStore.getAverageSpot (location.getLatitude(), location.getLongitude(), location.getCourse());
 			
 			if (globalTraceAvgSport != null) {
 				Double maxSpeed = globalTraceAvgSport.getMaxSpeed();
@@ -294,11 +297,11 @@ public class TrafficServiceImpl implements TrafficService {
 				userStat = new UserStat(
 						location.getIdUser(),
 						location.getIdSession(),
-						Double.valueOf(location.getPosLo()),
-						Double.valueOf(location.getPosLa()),
+						location.getLongitude(),
+						location.getLatitude(),
 						moySpeed,
 						maxSpeed,
-						Double.valueOf(location.getSpeed()),
+						location.getSpeed(),
 						direction,
 						new Date(), false, null, inTrafficUser);
 
@@ -306,14 +309,14 @@ public class TrafficServiceImpl implements TrafficService {
 			}
 
 			GlobalTrace globalTrace = new GlobalTrace(
-					Double.valueOf(location.getPosLo()),
-					Double.valueOf(location.getPosLa()),
-					Double.valueOf(location.getSpeed()),
-					Double.valueOf(location.getSpeed()),
+					location.getLongitude(),
+					location.getLatitude(),
+					location.getSpeed(),
+					location.getSpeed(),
 					direction,
 					new Date());
 
-			if (Double.valueOf(location.getSpeed()) > -1 && Double.valueOf(location.getCourse()) > -1) 
+			if (location.getSpeed() > -1 && location.getCourse() > -1) 
 				ToStore.storeOne(globalTrace);
 		}
 
@@ -334,5 +337,22 @@ public class TrafficServiceImpl implements TrafficService {
 	@Autowired
 	public void setUserTraceManager(UserTraceManager userTraceManager) {
 		this.userTraceManager = userTraceManager;
+	}
+
+	public UserStatManager getUserStatManager() {
+		return userStatManager;
+	}
+
+	@Autowired
+	public void setUserStatManager(UserStatManager userStatManager) {
+		this.userStatManager = userStatManager;
+	}
+
+	public GlobalTraceManager getGlobalTraceManager() {
+		return globalTraceManager;
+	}
+
+	public void setGlobalTraceManager(GlobalTraceManager globalTraceManager) {
+		this.globalTraceManager = globalTraceManager;
 	}
 }

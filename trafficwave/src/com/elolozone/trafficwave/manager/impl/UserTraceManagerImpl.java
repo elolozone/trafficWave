@@ -18,7 +18,7 @@ import com.elolozone.trafficwave.model.UserTrace;
  *
  * @author brasseld@gmail.com
  */
-@Service(value = "userTraceService")
+@Service(value = "userTraceManager")
 @Transactional
 public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> implements UserTraceManager {
 

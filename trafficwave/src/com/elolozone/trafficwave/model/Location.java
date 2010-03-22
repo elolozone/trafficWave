@@ -2,38 +2,38 @@ package com.elolozone.trafficwave.model;
 
 public class Location {
 	
-	private String posLo;
-	private String posLa;
-	private String speed;
+	private Double longitude;
+	private Double latitude;
+	private Double speed;
 	private String idUser;
-	private String course;
+	private Double course;
 	private String postalCode;
 	private String street;
 	private boolean inTraffic;
 	private String inTrafficUser;
 	private int idSession;
-	
-	public String getPosLo() {
-		return posLo;
+
+	public Double getLongitude() {
+		return longitude;
 	}
-	
-	public void setPosLo(String posLo) {
-		this.posLo = posLo;
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
-	
-	public String getPosLa() {
-		return posLa;
+
+	public Double getLatitude() {
+		return latitude;
 	}
-	
-	public void setPosLa(String posLa) {
-		this.posLa = posLa;
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
 	}
-	
-	public String getSpeed() {
+
+	public Double getSpeed() {
 		return speed;
 	}
 	
-	public void setSpeed(String speed) {
+	public void setSpeed(Double speed) {
 		this.speed = speed;
 	}
 	
@@ -45,11 +45,11 @@ public class Location {
 		this.idUser = idUser;
 	}
 	
-	public String getCourse() {
+	public Double getCourse() {
 		return course;
 	}
 	
-	public void setCourse(String course) {
+	public void setCourse(Double course) {
 		this.course = course;
 	}
 	
