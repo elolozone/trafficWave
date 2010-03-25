@@ -1,5 +1,6 @@
 package com.elolozone.trafficwave.manager.api;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.elolozone.trafficwave.model.UserTrace;
@@ -15,4 +16,6 @@ public interface UserTraceManager extends GenericManager<UserTrace, String> {
 	List<UserTrace> findUserInTraffic(int activeUserSec, int mockTime);
 	
 	List<UserTrace> findAllAndOrderBy(String property, boolean asc);
+	
+	Collection<UserTrace> findUserDestinations(int destinationDepuisSec, String idUser, double latitude, double longitude);
 }

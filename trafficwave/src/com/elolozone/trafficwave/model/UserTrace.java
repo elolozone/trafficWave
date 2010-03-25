@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.elolozone.constants.Geo;
+import com.elolozone.trafficwave.util.Geo;
 
 @Entity
 @Table(name = "user_trace")

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.elolozone.constants.Geo;
 import com.elolozone.trafficwave.dao.api.GlobalTraceDao;
 import com.elolozone.trafficwave.manager.api.GlobalTraceManager;
 import com.elolozone.trafficwave.model.GlobalTrace;
+import com.elolozone.trafficwave.util.Geo;
 
 /**
  * Implementation of {@link GlobalTraceManager} interface.

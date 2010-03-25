@@ -45,6 +45,11 @@ public interface TrafficService {
 	@Produces(MediaType.TEXT_PLAIN)
 	String listUserStat();
 	
+	@Path("/dots")
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	String listDots();
+	
 	@Path("/averageSpot")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)

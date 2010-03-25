@@ -1,7 +1,14 @@
 package com.elolozone.trafficwave.manager.impl;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,6 +124,62 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 			
 			this.userTraceDao.save(userTrace);
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Collection<UserTrace> findUserDestinations(int destinationDepuisSec,
+			String idUser, double latitude, double longitude) {
+		
+		double precision = 0.005d;
+		Date now = new Date();
+		Date selectDate = new Date(now.getTime() - 1000 * destinationDepuisSec);
+		
+		List<UserTrace> availableUserTraces = this.userTraceDao.findByUserAndLowerThanLastLocationDate(idUser, selectDate);
+		Map<Integer, UserTrace> selectedUserTracesResult = null;
+		
+		if (! availableUserTraces.isEmpty()) {
+			selectedUserTracesResult = new HashMap<Integer, UserTrace>();
+			
+			for (UserTrace userTrace : availableUserTraces)  { 
+				// Calcul
+				double dLa = latitude - userTrace.getLatitude();
+				double dLo = longitude - userTrace.getLongitude();
+				double d = sqrt(pow(dLa, 2) + pow(dLo, 2));
+				
+				if (d <= precision)
+					selectedUserTracesResult.put(userTrace.getIdSession(), userTrace);
+			}
+		}
+		
+		if (selectedUserTracesResult == null)
+			return null;
+		
+		availableUserTraces = this.userTraceDao.findByUserAndLastLocationAndLowerThanLastLocationDate(idUser, Boolean.TRUE, selectDate);
+		
+		Map<String, UserTrace> userTraceResult = new HashMap<String, UserTrace>();
+		
+		if (! availableUserTraces.isEmpty()) {
+			
+			for (UserTrace userTrace : availableUserTraces) { 
+				if (abs(userTrace.getLatitude() - latitude) > 0.001 && abs(userTrace.getLongitude() - longitude) > 0.001) {
+					UserTrace originUserTrace  = selectedUserTracesResult.get(userTrace.getIdSession());
+					if (originUserTrace != null) {
+						userTrace.setStartLocationDate(originUserTrace.getLastLocationDate());
+						
+						Double nLa = Math.roundDown(userTrace.getLatitude(), 2);
+						Double nLo = Math.roundDown(userTrace.getLongitude(), 2);
+								
+						// uniquement les idSession selectionnées
+						userTraceResult.put(nLa.toString()+nLo.toString(), userTrace);
+					}
+				}
+			}
+			return userTraceResult.values();
+		}
+		
+		return null;
 	}
 
 	/**

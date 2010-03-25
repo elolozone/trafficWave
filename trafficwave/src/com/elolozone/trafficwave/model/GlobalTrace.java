@@ -7,7 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.elolozone.constants.Geo;
+import com.elolozone.trafficwave.util.Geo;
 
 public class GlobalTrace { 
 

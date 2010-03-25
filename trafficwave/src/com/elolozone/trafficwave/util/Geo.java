@@ -1,4 +1,4 @@
-package com.elolozone.constants;
+package com.elolozone.trafficwave.util;
 
 public class Geo {
 	

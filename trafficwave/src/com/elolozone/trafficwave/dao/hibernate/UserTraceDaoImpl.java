@@ -130,4 +130,35 @@ public class UserTraceDaoImpl extends GenericDaoImpl<UserTrace, String> implemen
 		
 		return (List<UserTrace>) critQuery.list();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public List<UserTrace> findByUserAndLowerThanLastLocationDate(
+			String idUser, Date date) {
+		Criteria critQuery = this.getSession().createCriteria(UserTrace.class);
+		
+		critQuery.
+			add(Restrictions.eq("idUser", idUser)).
+			add(Restrictions.gt("lastLocationDate", date));
+		
+		return (List<UserTrace>) critQuery.list();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public List<UserTrace> findByUserAndLastLocationAndLowerThanLastLocationDate(
+			String idUser, boolean lastLocation, Date date) {
+		Criteria critQuery = this.getSession().createCriteria(UserTrace.class);
+		
+		critQuery.
+			add(Restrictions.eq("idUser", idUser)).
+			add(Restrictions.eq("lastLocation", lastLocation)).
+			add(Restrictions.gt("lastLocationDate", date));
+		
+		return (List<UserTrace>) critQuery.list();
+	}
 }

@@ -20,4 +20,8 @@ public interface UserTraceDao extends GenericDao<UserTrace, String> {
 	List<UserTrace> findAll(String orderedProperty, boolean asc);
 	
 	List<UserTrace> findBy(String idUser, Integer idSession, Date selectDate);
+	
+	List<UserTrace> findByUserAndLowerThanLastLocationDate(String idUser, Date date);
+	
+	List<UserTrace> findByUserAndLastLocationAndLowerThanLastLocationDate(String idUser, boolean lastLocation, Date date);
 }
