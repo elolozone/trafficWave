@@ -14,14 +14,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.elolozone.constants.Geo;
-import com.elolozone.trafficstore.GlobalTrace;
 import com.elolozone.trafficstore.ToStore;
 import com.elolozone.trafficstore.UserStat;
 import com.elolozone.trafficwave.constants.IConstants;
 import com.elolozone.trafficwave.manager.api.GlobalTraceManager;
-import com.elolozone.trafficwave.manager.api.UserStatManager;
 import com.elolozone.trafficwave.manager.api.UserTraceManager;
+import com.elolozone.trafficwave.manager.api.UserManager;
+import com.elolozone.trafficwave.model.GlobalTrace;
 import com.elolozone.trafficwave.model.Location;
+import com.elolozone.trafficwave.model.UserTrace;
 import com.elolozone.trafficwave.ws.api.TrafficService;
 
 /**
@@ -36,8 +37,8 @@ import com.elolozone.trafficwave.ws.api.TrafficService;
 public class TrafficServiceImpl implements TrafficService {
 
 	private GlobalTraceManager globalTraceManager;
+	private UserManager userManager;
 	private UserTraceManager userTraceManager;
-	private UserStatManager userStatManager;
 	
 	/**
 	 * Hold current users location.
@@ -48,7 +49,7 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getNews(String userId) {
-		com.elolozone.trafficwave.model.UserTrace userTrace = new com.elolozone.trafficwave.model.UserTrace(userId);
+		com.elolozone.trafficwave.model.User userTrace = new com.elolozone.trafficwave.model.User(userId);
 		this.getUserTraceManager().save(userTrace);
 		
 		return 
@@ -63,12 +64,12 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getPaths(String userId, int sessionId) {
-		List<com.elolozone.trafficwave.model.UserStat> userStats = this.getUserStatManager().findBySessionAndUser(sessionId, userId); 
+		List<com.elolozone.trafficwave.model.UserTrace> userStats = this.getUserStatManager().findBySessionAndUser(sessionId, userId); 
 		
 		if (userStats != null)  {
 			StringBuilder sb = new StringBuilder();
 			
-			for (com.elolozone.trafficwave.model.UserStat userStat : userStats) {
+			for (com.elolozone.trafficwave.model.UserTrace userStat : userStats) {
 				sb.append(userStat.getLatitude()).append(',').append(userStat.getLongitude()).append('\n');
 			}
 			
@@ -82,13 +83,13 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String identifyTrafficJob() {
-		List<com.elolozone.trafficwave.model.UserStat> userStats = this.getUserStatManager().findUserInTraffic(IConstants.ACTIF_USER_MAX_SEC, IConstants.DUREE_TODECLARE_BOUCHON_SEC);
+		List<com.elolozone.trafficwave.model.UserTrace> userStats = this.getUserStatManager().findUserInTraffic(IConstants.ACTIF_USER_MAX_SEC, IConstants.DUREE_TODECLARE_BOUCHON_SEC);
 
 		if (userStats != null) {
 			
 			StringBuilder sb = new StringBuilder();
 			
-			for (com.elolozone.trafficwave.model.UserStat userStat : userStats) {
+			for (com.elolozone.trafficwave.model.UserTrace userStat : userStats) {
 				Location location =  locations.get(userStat.getIdUser());
 				
 				sb.append(userStat.getIdUser()).append(',').
@@ -166,8 +167,8 @@ public class TrafficServiceImpl implements TrafficService {
 			sb.append(globalTrace.getLatitude()).append(',').
 				append(globalTrace.getLongitude()).append(',').
 				append(globalTrace.getSumSpeed()).append(',').
-				append(globalTrace.getNbUser()).append(',').
-				append(globalTrace.getPoleDirection()).append(',').
+				append(globalTrace.getNbPoints()).append(',').
+				append(globalTrace.getDirection()).append(',').
 				append(globalTrace.getMaxSpeed()).append(",&\n");
 		}
 		
@@ -180,9 +181,9 @@ public class TrafficServiceImpl implements TrafficService {
 	public String listUserStat() {
 		StringBuilder sb = new StringBuilder("Latitude,Longitude,maxSpeed,Ratio,RatioPond,AvgSpeed,time,surfDiff,surfVmoy,idUser,speed,umSurfVmoy\n");
 		
-		List<com.elolozone.trafficwave.model.UserStat> userStats = this.getUserStatManager().findAllAndOrderBy("lastLocationDate", Boolean.FALSE);
+		List<com.elolozone.trafficwave.model.UserTrace> userStats = this.getUserStatManager().findAllAndOrderBy("lastLocationDate", Boolean.FALSE);
 		
-		for (com.elolozone.trafficwave.model.UserStat userStat : userStats) {
+		for (com.elolozone.trafficwave.model.UserTrace userStat : userStats) {
 			sb.append(userStat.getLatitude()).append(',').
 				append(userStat.getLongitude()).append(',').
 				append(userStat.getMaxSpeed()).append(',').
@@ -205,11 +206,11 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String averageSpot(double longitude, double latitude, double course) {
-		GlobalTrace globalTrace = ToStore.getAverageSpot(longitude, latitude, course);
+		GlobalTrace globalTrace = this.getGlobalTraceManager().findAverageSpot(latitude, longitude, course);
 		
 		if (globalTrace != null) {
 			// TODO: Some explanation about this calc, what is 3.6f ?
-			Double vitMoy = globalTrace.getSumSpeed() / globalTrace.getNbUser() * 3.6f;
+			Double vitMoy = globalTrace.getSumSpeed() / globalTrace.getNbPoints() * 3.6f;
 			
 			if (globalTrace.getMaxSpeed() != null) 
 			{
@@ -233,7 +234,7 @@ public class TrafficServiceImpl implements TrafficService {
 		for (Entry<String, Location> entry : locations.entrySet()) {
 			Location loc = entry.getValue();
 
-			GlobalTrace globalTrace = ToStore.getAverageSpot (loc.getLongitude(), loc.getLatitude(), loc.getCourse());
+			GlobalTrace globalTrace = this.getGlobalTraceManager().findAverageSpot(loc.getLatitude(), loc.getLongitude(), loc.getCourse());
 			
 			if (globalTrace != null) {
 				Double vitMax = globalTrace.getMaxSpeed() * 3.6f;
@@ -253,8 +254,8 @@ public class TrafficServiceImpl implements TrafficService {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String sendPositionOnly(String id, double longitude, double latitude, double speed, double course, String street,
-			int idSession, String postalCode, String traffic) {
+	public String sendPositionOnly(String id, int idSession, double longitude,
+			double latitude, double speed, double course) {
 		Location location = new Location();
 
 		location.setIdUser(id);
@@ -262,12 +263,9 @@ public class TrafficServiceImpl implements TrafficService {
 		location.setLatitude(latitude);
 		location.setSpeed(speed);
 		location.setCourse(course);
-		location.setStreet(street) ;
 		location.setIdSession(idSession);
-		location.setPostalCode(postalCode);
-		location.setInTrafficUser(traffic);
 
-		UserStat userStat = null;
+		UserTrace userTrace = null;
 		
 		if (location.getIdUser() != null && location.getLatitude() != null && location.getLongitude() != null && location.getSpeed() != null && location.getCourse() != null)     
 		{
@@ -279,14 +277,14 @@ public class TrafficServiceImpl implements TrafficService {
 
 			locations.put(location.getIdUser(), location);
 
-			Geo.Direction direction =  ToStore.getDirection(location.getCourse());
+			Geo.Direction direction = Geo.getDirection(location.getCourse());
 
 			//  on récupére la vitesse moyenne et max et on enregistre la position
-			GlobalTrace globalTraceAvgSport = ToStore.getAverageSpot (location.getLatitude(), location.getLongitude(), location.getCourse());
+			GlobalTrace globalTraceAvgSport = this.getGlobalTraceManager().findAverageSpot(location.getLatitude(), location.getLongitude(), location.getCourse());
 			
 			if (globalTraceAvgSport != null) {
 				Double maxSpeed = globalTraceAvgSport.getMaxSpeed();
-				Double moySpeed = globalTraceAvgSport.getSumSpeed() / globalTraceAvgSport.getNbUser();
+				Double moySpeed = globalTraceAvgSport.getSumSpeed() / globalTraceAvgSport.getNbPoints();
 				boolean inTrafficUser;
 				
 				if (location.getInTrafficUser().equals("TRUE")) 
@@ -294,7 +292,7 @@ public class TrafficServiceImpl implements TrafficService {
 				else 
 					inTrafficUser = false;
 						
-				userStat = new UserStat(
+				userTrace = new UserTrace(
 						location.getIdUser(),
 						location.getIdSession(),
 						location.getLongitude(),
@@ -305,23 +303,24 @@ public class TrafficServiceImpl implements TrafficService {
 						direction,
 						new Date(), false, null, inTrafficUser);
 
-				userStat = ToStore.storeOne(userStat);
+				this.userTraceManager.save(userTrace);
 			}
 
-			GlobalTrace globalTrace = new GlobalTrace(
-					location.getLongitude(),
-					location.getLatitude(),
-					location.getSpeed(),
-					location.getSpeed(),
-					direction,
-					new Date());
-
-			if (location.getSpeed() > -1 && location.getCourse() > -1) 
-				ToStore.storeOne(globalTrace);
+			if (location.getSpeed() > -1 && location.getCourse() > -1) {
+				com.elolozone.trafficwave.model.GlobalTrace globalTrace = new com.elolozone.trafficwave.model.GlobalTrace(
+						location.getLongitude(),
+						location.getLatitude(),
+						location.getSpeed(),
+						location.getSpeed(),
+						direction,
+						new Date());
+				
+				this.globalTraceManager.save(globalTrace);
+			}
 		}
 
-		if (userStat != null) {
-			if (userStat.getInTraffic()) {
+		if (userTrace != null) {
+			if (userTrace.getInTraffic()) {
 				return "TRAFFIC%";
 			} else {
 				return "NOTRAFFIC%"; // NO TRAFFIC
@@ -330,22 +329,22 @@ public class TrafficServiceImpl implements TrafficService {
 			return "NOTRAFFIC%"; // NO TRAFFIC
 	}
 
-	public UserTraceManager getUserTraceManager() {
+	public UserManager getUserTraceManager() {
+		return userManager;
+	}
+
+	@Autowired
+	public void setUserTraceManager(UserManager userTraceManager) {
+		this.userManager = userTraceManager;
+	}
+
+	public UserTraceManager getUserStatManager() {
 		return userTraceManager;
 	}
 
 	@Autowired
-	public void setUserTraceManager(UserTraceManager userTraceManager) {
-		this.userTraceManager = userTraceManager;
-	}
-
-	public UserStatManager getUserStatManager() {
-		return userStatManager;
-	}
-
-	@Autowired
-	public void setUserStatManager(UserStatManager userStatManager) {
-		this.userStatManager = userStatManager;
+	public void setUserStatManager(UserTraceManager userStatManager) {
+		this.userTraceManager = userStatManager;
 	}
 
 	public GlobalTraceManager getGlobalTraceManager() {

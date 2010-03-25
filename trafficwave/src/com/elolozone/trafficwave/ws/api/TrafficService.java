@@ -58,7 +58,6 @@ public interface TrafficService {
 	@Path("/sendposition/{user}/{session}")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
-	String sendPositionOnly(@PathParam ("user") String id, @QueryParam("posLo") double longitude, @QueryParam("posLa") double latitude, 
-			@QueryParam("speed") double speed, @QueryParam("course") double course, @QueryParam("street") String street,
-			@PathParam ("session") int idSession, @QueryParam("postalCode") String postalCode, @QueryParam("traffic") String traffic);
+	String sendPositionOnly(@PathParam ("user") String id, @PathParam ("session") int idSession, @QueryParam("posLo") double longitude, 
+			@QueryParam("posLa") double latitude, @QueryParam("speed") double speed, @QueryParam("course") double course);
 }

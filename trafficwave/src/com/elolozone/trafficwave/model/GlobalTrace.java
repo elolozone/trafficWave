@@ -9,21 +9,19 @@ import javax.persistence.TemporalType;
 
 import com.elolozone.constants.Geo;
 
-public class GlobalTrace extends BaseEntity { 
+public class GlobalTrace { 
 
 	/**
 	 * Serial version UID
 	 */
-	private static final long serialVersionUID = 222852616628718200L;
+	private static final long serialVersionUID = 1L;
 	
 	private Double longitude;
 	private Double latitude;
 	private Double sumSpeed;
 	private Double maxSpeed;
-	private Integer secondesStay;
-	private Date lastStayDate;
-	private String poleDirection;
-	private Integer nbUser;
+	private Integer direction;
+	private Integer nbPoints;
 	private Date lastLocationDate;
 
 	public GlobalTrace (Double posLo, Double posLa, Double sumSpeed, Double maxSpeed, Geo.Direction direction, Date lastLocationDate) {
@@ -31,7 +29,7 @@ public class GlobalTrace extends BaseEntity {
 		this.latitude = posLa;
 		this.sumSpeed = sumSpeed;
 		this.maxSpeed = maxSpeed;
-		this.poleDirection = direction.toString();
+		this.direction = direction.getValue();
 		this.lastLocationDate = lastLocationDate;
 	}
 
@@ -76,43 +74,23 @@ public class GlobalTrace extends BaseEntity {
 	}
 
 	@Basic
-	@Column(name = "secondes_stay")
-	public Integer getSecondesStay() {
-		return secondesStay;
+	@Column(name = "direction")
+	public Integer getDirection() {
+		return direction;
 	}
 
-	public void setSecondesStay(Integer secondesStay) {
-		this.secondesStay = secondesStay;
-	}
-
-	@Temporal(value = TemporalType.DATE)
-	@Column(name = "last_stay_date")
-	public Date getLastStayDate() {
-		return lastStayDate;
-	}
-
-	public void setLastStayDate(Date lastStayDate) {
-		this.lastStayDate = lastStayDate;
+	public void setDirection(Integer direction) {
+		this.direction = direction;
 	}
 
 	@Basic
-	@Column(name = "pole_direction")
-	public String getPoleDirection() {
-		return poleDirection;
+	@Column(name = "nb_points")
+	public Integer getNbPoints() {
+		return nbPoints;
 	}
 
-	public void setPoleDirection(String poleDirection) {
-		this.poleDirection = poleDirection;
-	}
-
-	@Basic
-	@Column(name = "nb_user")
-	public Integer getNbUser() {
-		return nbUser;
-	}
-
-	public void setNbUser(Integer nbUser) {
-		this.nbUser = nbUser;
+	public void setNbPoints(Integer nbPoints) {
+		this.nbPoints = nbPoints;
 	}
 
 	@Temporal(value = TemporalType.DATE)

@@ -1,5 +1,8 @@
 package com.elolozone.trafficwave.dao.api;
 
+import java.util.Date;
+import java.util.List;
+
 import com.elolozone.trafficwave.model.UserTrace;
 
 /**
@@ -8,7 +11,13 @@ import com.elolozone.trafficwave.model.UserTrace;
  */
 public interface UserTraceDao extends GenericDao<UserTrace, String> {
 
-	UserTrace getLastTraceByUser(String userId);
-	
 	int deleteAll();
+	
+	List<UserTrace> findBySessionAndUser(int sessionId, String userId);
+	
+	List<UserTrace> findUserInTraffic(int activeUserSec, int mockTime);
+	
+	List<UserTrace> findAll(String orderedProperty, boolean asc);
+	
+	List<UserTrace> findBy(String idUser, Integer idSession, Date selectDate);
 }

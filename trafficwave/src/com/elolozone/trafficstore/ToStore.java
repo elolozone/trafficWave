@@ -39,20 +39,7 @@ public class ToStore {
 		bdPos = bdPos.setScale(n, BigDecimal.ROUND_DOWN);
 		return Double.valueOf(bdPos.doubleValue());
 	}
-	
 
-	static public Geo.Direction getDirection(Double course) {
-
-		if (course >= 45 && course < 135)
-			return Geo.Direction.EAST;
-		if (course >= 135 && course < 225)
-			return Geo.Direction.SOUTH;
-		if (course >= 225 && course < 315)
-			return Geo.Direction.WEST;
-		if (course >= 315 || course < 45)
-			return Geo.Direction.NORTH;
-		return Geo.Direction.NULL;
-	}
 
 	static public void deleteUserStat() {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -98,7 +85,7 @@ public class ToStore {
 			Double course) {
 		posLo = gridConvertion(posLo);
 		posLa = gridConvertion(posLa);
-		Geo.Direction direction = getDirection(course);
+		Geo.Direction direction = Geo.getDirection(course);
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 

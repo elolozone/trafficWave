@@ -6,6 +6,8 @@ public class Location {
 	private Double latitude;
 	private Double speed;
 	private String idUser;
+	
+	// Course is an equivalent for angle (from IPhone API)
 	private Double course;
 	private String postalCode;
 	private String street;

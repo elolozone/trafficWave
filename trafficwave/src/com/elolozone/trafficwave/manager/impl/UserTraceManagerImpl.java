@@ -1,6 +1,7 @@
 package com.elolozone.trafficwave.manager.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,10 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.elolozone.trafficwave.dao.api.UserStatDao;
+import com.elolozone.trafficwave.constants.IConstants;
 import com.elolozone.trafficwave.dao.api.UserTraceDao;
 import com.elolozone.trafficwave.manager.api.UserTraceManager;
 import com.elolozone.trafficwave.model.UserTrace;
+import com.elolozone.trafficwave.util.Math;
 
 /**
  * Implementation of {@link UserTraceManager} interface.
@@ -23,7 +25,7 @@ import com.elolozone.trafficwave.model.UserTrace;
 public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> implements UserTraceManager {
 
 	/**
-	 * Link with {@link UserStatDao}.
+	 * Link with {@link UserTraceDao}.
 	 */
 	private UserTraceDao userTraceDao;
 
@@ -37,24 +39,104 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 		super(dao);
 		this.userTraceDao = dao;
 	}
-
-	/* (non-Javadoc)
-	 * @see com.elolozone.trafficwave.manager.impl.GenericManagerImpl#save(java.lang.Object)
+	
+	/**
+	 * {@inheritDoc}
 	 */
-	@Override
 	public void save(UserTrace userTrace) {
-		// Be careful: the userTrace object must be initialized with values before
-		// the call of this method !
-		UserTrace previousUserTrace = this.userTraceDao.getLastTraceByUser(userTrace.getIdUser());
+		Date now = new Date();
+		Date selectDate = new Date(now.getTime() - 1000 * IConstants.TEMPS_PONDERATION_RATIO_SEC);
+		
+		List<UserTrace> lstUserTrace = this.userTraceDao.findBy(userTrace.getIdUser(), userTrace.getIdSession(), selectDate);
+		
+		if (! lstUserTrace.isEmpty()) {
+			UserTrace previous = lstUserTrace.get(0);
+			
+			previous.setLastLocation(false);
+			userTrace.setLastLocation(true);
 
-		if (previousUserTrace != null) {
-			userTrace.setLastIdSession(previousUserTrace.getLastIdSession() + 1);
+			double surfDiff = Math.calcSurfDiff(userTrace, previous);
+			double surfVMoy = Math.calcSurfVmoy(userTrace, previous);
+			
+			userTrace.setSurfDiff(surfDiff);
+			userTrace.setSurfVmoy(surfVMoy);
+
+			if (surfVMoy > 0)
+				userTrace.setRatio(surfDiff / surfVMoy); 
+			else 
+				userTrace.setRatio(0d);
+			
+			if (userTrace.getAvgSpeed() < (IConstants.VITESSE_MIN_ANNULATION_RATIO / 3.6d))
+				userTrace.setRatio(0d);
+			
+			userTrace.setPrevious(previous);
+
+			// Calcul du ratio pondéré
+			double cumulRatio = 0d;
+			
+			for (UserTrace oneUserTrace : lstUserTrace) {
+				cumulRatio = cumulRatio + oneUserTrace.getRatio() ; 
+			}
+			
+			double ratioPond = cumulRatio / lstUserTrace.size();
+			userTrace.setRatioPond(ratioPond);
+
+			// vitesse incorecte
+			if (ratioPond > IConstants.RATIO_DECLENCHEMENT_BOUCHON && 
+					userTrace.getSpeed() <= IConstants.VITESSE_MAX_BOUCHON_KMH / 3.6d)
+			{
+				if (! previous.getInTraffic()) {
+					// c'est nouveau 
+					userTrace.setInTraffic(true);
+					userTrace.setInTrafficDeclaredTime(new Date());
+				}
+				else {
+					userTrace.setInTraffic(true);
+					userTrace.setInTrafficDeclaredTime(previous.getInTrafficDeclaredTime());
+				}
+			}
+			else
+			{
+				userTrace.setInTraffic(false);
+				userTrace.setInTrafficDeclaredTime(null);
+			}
+
+			this.userTraceDao.update(previous);
+			this.userTraceDao.save(userTrace);
 		} else {
-			userTrace.setLastIdSession(1);
+			userTrace.setMaxSpeed(0d);
+			userTrace.setSurfDiff(0d);
+			userTrace.setSurfVmoy(0d);
+			userTrace.setRatio(0d);
+			userTrace.setLastLocation(true);
+			userTrace.setRatioPond(0d);
+			userTrace.setLastLocationDate(now);
+			userTrace.setInTraffic(false);
+			userTrace.setSumSurfDif(0d);
+			userTrace.setSumSurfVmoy(0d);
+			
+			this.userTraceDao.save(userTrace);
 		}
-		
-		userTrace.setLastConnectionTime(new Date());
-		
-		this.userTraceDao.save(userTrace);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<UserTrace> findBySessionAndUser(int sessionId, String userId) {
+		return this.userTraceDao.findBySessionAndUser(sessionId, userId);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<UserTrace> findUserInTraffic(int activeUserSec, int mockTime) {
+		return this.userTraceDao.findUserInTraffic(activeUserSec, mockTime);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<UserTrace> findAllAndOrderBy(String property, boolean asc) {
+		return this.userTraceDao.findAll(property, asc);
 	}
 }

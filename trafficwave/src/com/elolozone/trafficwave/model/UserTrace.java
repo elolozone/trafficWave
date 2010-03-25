@@ -5,55 +5,88 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.GenericGenerator;
+
+import com.elolozone.constants.Geo;
+
 @Entity
 @Table(name = "user_trace")
-public class UserTrace extends BaseEntity {
-	
+public class UserTrace {
+
 	/**
 	 * Serial version UID
 	 */
-	private static final long serialVersionUID = -7346883922402081777L;
+	private static final long serialVersionUID = 1L;
 	
-	private String idUser; 
-	private Integer lastIdSession; 
-	private Integer totalTime; 
-	private Integer runningMeter;
-	private Date lastConnectionTime; 
-	private String email; 
-	private String firstName; 
-	private String lastName; 
-	private String city;
-	private String postalCode;
-
-	public UserTrace (
-			String idUser, 
-			Integer lastIdSession, 
-			Integer totalTime, 
-			Integer runningMeter, 
-			Date lastConnectionTime, 
-			String email, 
-			String firstName,  
-			String lastName, 
-			String city, 
-			String postalCode) {
+	private String id;
+	private String idUser;
+	private Integer idSession;
+	private Boolean inTraffic;
+	private Boolean inTrafficUser;
+	private Boolean inTrafficAlert;
+	private Date inTrafficDeclaredTime;
+	private UserTrace previous;
+	private Double longitude;
+	private Double latitude;
+	private Double maxSpeed;
+	private Double avgSpeed;
+	private Double speed;
+	private Double sumSurfDif;
+	private Double sumSurfVmoy;
+	private Double surfDiff;
+	private Double minAvgSpeedAndSpeed;
+	private Double surfVmoy;
+	private Double ratio;
+	private Double ratioPond;
+	private String poleDirection;
+	private Date lastLocationDate;
+	private Date startLocationDate;
+	private boolean lastLocation;
+	
+	public UserTrace (String idUser, 
+			Integer idSession,
+			Double longitude, 
+			Double latitude , 
+			Double avgSpeed, 
+			Double maxSpeed,
+			Double speed,
+			Geo.Direction direction, 
+			Date lastLocationDate,
+			boolean inTraffic,
+			Date inTrafficDeclaredTime,
+			boolean inTrafficUser) {
 		this.idUser = idUser;
-		this.lastIdSession = lastIdSession; 
-		this.totalTime = totalTime;
-		this.runningMeter=runningMeter ; 
-		this.lastConnectionTime=lastConnectionTime;
-		this.email= email;
-		this.firstName= firstName; 
-		this.lastName=lastName;
-		this.city=city; 
-		this.postalCode = postalCode;
+		this.idSession = idSession;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.avgSpeed = avgSpeed;
+		this.maxSpeed = maxSpeed;
+		this.speed = speed;
+		this.poleDirection = direction.toString();
+		this.lastLocationDate = lastLocationDate;
+		this.inTraffic = inTraffic;
+		this.inTrafficUser = inTrafficUser;
+		this.inTrafficDeclaredTime = inTrafficDeclaredTime;
 	}
 	
-	public UserTrace (String idUser) {
-		this.idUser = idUser;
+	@Id
+	@GeneratedValue(generator = "strategy-uuid")
+	@GenericGenerator(name = "strategy-uuid", strategy = "uuid")
+	@Column(name = "id", nullable = false, length = 32)
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Basic
@@ -67,92 +100,222 @@ public class UserTrace extends BaseEntity {
 	}
 
 	@Basic
-	@Column(name = "last_id_session")
-	public Integer getLastIdSession() {
-		return lastIdSession;
+	@Column(name = "id_session")
+	public Integer getIdSession() {
+		return idSession;
 	}
 
-	public void setLastIdSession(Integer lastIdSession) {
-		this.lastIdSession = lastIdSession;
-	}
-
-	@Basic
-	@Column(name = "total_time")
-	public Integer getTotalTime() {
-		return totalTime;
-	}
-
-	public void setTotalTime(Integer totalTime) {
-		this.totalTime = totalTime;
+	public void setIdSession(Integer idSession) {
+		this.idSession = idSession;
 	}
 
 	@Basic
-	@Column(name = "running_meter")
-	public Integer getRunningMeter() {
-		return runningMeter;
+	@Column(name = "in_traffic")
+	public Boolean getInTraffic() {
+		return inTraffic;
 	}
 
-	public void setRunningMeter(Integer runningMeter) {
-		this.runningMeter = runningMeter;
+	public void setInTraffic(Boolean inTraffic) {
+		this.inTraffic = inTraffic;
+	}
+
+	@Basic
+	@Column(name = "in_traffic_user")
+	public Boolean getInTrafficUser() {
+		return inTrafficUser;
+	}
+
+	public void setInTrafficUser(Boolean inTrafficUser) {
+		this.inTrafficUser = inTrafficUser;
+	}
+
+	@Basic
+	@Column(name = "in_traffic_alert")
+	public Boolean getInTrafficAlert() {
+		return inTrafficAlert;
+	}
+
+	public void setInTrafficAlert(Boolean inTrafficAlert) {
+		this.inTrafficAlert = inTrafficAlert;
 	}
 
 	@Temporal(value = TemporalType.DATE)
-	@Column(name = "last_connection_time")
-	public Date getLastConnectionTime() {
-		return lastConnectionTime;
+	@Column(name = "in_traffic_decl_time")
+	public Date getInTrafficDeclaredTime() {
+		return inTrafficDeclaredTime;
 	}
 
-	public void setLastConnectionTime(Date lastConnectionTime) {
-		this.lastConnectionTime = lastConnectionTime;
+	public void setInTrafficDeclaredTime(Date inTrafficDeclaredTime) {
+		this.inTrafficDeclaredTime = inTrafficDeclaredTime;
 	}
 
-	@Basic
-	@Column(name = "email")
-	public String getEmail() {
-		return email;
+	@ManyToOne
+    @JoinColumn(name = "previous_trace_id")
+	public UserTrace getPrevious() {
+		return previous;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	@Basic
-	@Column(name = "first_name")
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setPrevious(UserTrace previous) {
+		this.previous = previous;
 	}
 
 	@Basic
-	@Column(name = "last_name")
-	public String getLastName() {
-		return lastName;
+	@Column(name = "longitude")
+	public Double getLongitude() {
+		return longitude;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	@Basic
-	@Column(name = "city")
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
 
 	@Basic
-	@Column(name = "postal_code")
-	public String getPostalCode() {
-		return postalCode;
+	@Column(name = "latitude")
+	public Double getLatitude() {
+		return latitude;
 	}
 
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	@Basic
+	@Column(name = "max_speed")
+	public Double getMaxSpeed() {
+		return maxSpeed;
+	}
+
+	public void setMaxSpeed(Double maxSpeed) {
+		this.maxSpeed = maxSpeed;
+	}
+
+	@Basic
+	@Column(name = "avg_speed")
+	public Double getAvgSpeed() {
+		return avgSpeed;
+	}
+
+	public void setAvgSpeed(Double avgSpeed) {
+		this.avgSpeed = avgSpeed;
+	}
+
+	@Basic
+	@Column(name = "speed")
+	public Double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(Double speed) {
+		this.speed = speed;
+	}
+
+	@Basic
+	@Column(name = "sum_sur_dif")
+	public Double getSumSurfDif() {
+		return sumSurfDif;
+	}
+
+	public void setSumSurfDif(Double sumSurfDif) {
+		this.sumSurfDif = sumSurfDif;
+	}
+
+	@Basic
+	@Column(name = "sum_sur_vmoy")
+	public Double getSumSurfVmoy() {
+		return sumSurfVmoy;
+	}
+
+	public void setSumSurfVmoy(Double sumSurfVmoy) {
+		this.sumSurfVmoy = sumSurfVmoy;
+	}
+
+	@Basic
+	@Column(name = "surf_diff")
+	public Double getSurfDiff() {
+		return surfDiff;
+	}
+
+	public void setSurfDiff(Double surfDiff) {
+		this.surfDiff = surfDiff;
+	}
+
+	@Basic
+	@Column(name = "min_avg_speed_and_speed")
+	public Double getMinAvgSpeedAndSpeed() {
+		return minAvgSpeedAndSpeed;
+	}
+
+	public void setMinAvgSpeedAndSpeed(Double minAvgSpeedAndSpeed) {
+		this.minAvgSpeedAndSpeed = minAvgSpeedAndSpeed;
+	}
+
+	@Basic
+	@Column(name = "surf_vmoy")
+	public Double getSurfVmoy() {
+		return surfVmoy;
+	}
+
+	public void setSurfVmoy(Double surfVmoy) {
+		this.surfVmoy = surfVmoy;
+	}
+
+	@Basic
+	@Column(name = "ratio")
+	public Double getRatio() {
+		return ratio;
+	}
+
+	public void setRatio(Double ratio) {
+		this.ratio = ratio;
+	}
+
+	@Basic
+	@Column(name = "ratio_pond")
+	public Double getRatioPond() {
+		return ratioPond;
+	}
+
+	public void setRatioPond(Double ratioPond) {
+		this.ratioPond = ratioPond;
+	}
+
+	@Basic
+	@Column(name = "pole_direction")
+	public String getPoleDirection() {
+		return poleDirection;
+	}
+
+	public void setPoleDirection(String poleDirection) {
+		this.poleDirection = poleDirection;
+	}
+
+	@Temporal(value = TemporalType.DATE)
+	@Column(name = "last_location_date")
+	public Date getLastLocationDate() {
+		return lastLocationDate;
+	}
+
+	public void setLastLocationDate(Date lastLocationDate) {
+		this.lastLocationDate = lastLocationDate;
+	}
+
+	@Temporal(value = TemporalType.DATE)
+	@Column(name = "start_location_date")
+	public Date getStartLocationDate() {
+		return startLocationDate;
+	}
+
+	public void setStartLocationDate(Date startLocationDate) {
+		this.startLocationDate = startLocationDate;
+	}
+
+	@Basic
+	@Column(name = "last_location")
+	public boolean isLastLocation() {
+		return lastLocation;
+	}
+
+	public void setLastLocation(boolean lastLocation) {
+		this.lastLocation = lastLocation;
 	}
 }

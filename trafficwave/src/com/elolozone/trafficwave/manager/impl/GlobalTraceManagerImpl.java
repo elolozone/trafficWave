@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.elolozone.constants.Geo;
 import com.elolozone.trafficwave.dao.api.GlobalTraceDao;
 import com.elolozone.trafficwave.manager.api.GlobalTraceManager;
 import com.elolozone.trafficwave.model.GlobalTrace;
@@ -38,32 +39,34 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 		this.globalTraceDao = dao;
 	}
 	
-	@Override
+	/**
+	 * {@inheritDoc}
+	 */
 	public void save(GlobalTrace globalTrace) {
 		globalTrace.setLatitude(gridConvertion(globalTrace.getLatitude()));
 		globalTrace.setLongitude(gridConvertion(globalTrace.getLongitude()));
 		
 		List<GlobalTrace> lstGlobalTraces = this.globalTraceDao.findBy(
-				globalTrace.getLatitude(), globalTrace.getLongitude(), globalTrace.getPoleDirection());
+				globalTrace.getLatitude(), globalTrace.getLongitude(), globalTrace.getDirection());
 		
 		if (lstGlobalTraces.size() == 1) {
-			GlobalTrace globalTracePerstited = lstGlobalTraces.get(0);
+			GlobalTrace globalTracePersisted = lstGlobalTraces.get(0);
 
-			globalTracePerstited.setSumSpeed(globalTracePerstited.getSumSpeed()
+			globalTracePersisted.setSumSpeed(globalTracePersisted.getSumSpeed()
 					+ globalTrace.getSumSpeed());
 
-			if (globalTracePerstited.getMaxSpeed() < globalTrace.getMaxSpeed()) {
-				globalTracePerstited.setMaxSpeed(globalTrace.getMaxSpeed());
+			if (globalTracePersisted.getMaxSpeed() < globalTrace.getMaxSpeed()) {
+				globalTracePersisted.setMaxSpeed(globalTrace.getMaxSpeed());
 			}
 
-			globalTracePerstited.setLastLocationDate(globalTrace
+			globalTracePersisted.setLastLocationDate(globalTrace
 					.getLastLocationDate());
 			
-			globalTracePerstited.setNbUser(globalTracePerstited.getNbUser() + 1);
+			globalTracePersisted.setNbPoints(globalTracePersisted.getNbPoints() + 1);
 
-			this.globalTraceDao.update(globalTracePerstited);
+			this.globalTraceDao.update(globalTracePersisted);
 		} else {
-			globalTrace.setNbUser(1);
+			globalTrace.setNbPoints(1);
 			this.globalTraceDao.save(globalTrace);
 		}
 	}
@@ -73,5 +76,12 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 		bdPos = BigDecimal.valueOf(pos);
 		bdPos = bdPos.setScale(4, BigDecimal.ROUND_DOWN);
 		return Double.valueOf(bdPos.doubleValue());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public GlobalTrace findAverageSpot(Double latitude, Double longitude, Double angle) {
+		return this.globalTraceDao.findAverageSpot(latitude, longitude, Geo.getDirection(angle).getValue());
 	}
 }
