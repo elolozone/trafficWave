@@ -43,7 +43,7 @@ public class UserManagerImpl extends GenericManagerImpl<User, String> implements
 	public void save(User user) {
 		// Be careful: the userTrace object must be initialized with values before
 		// the call of this method !
-		User previousUserTrace = this.userDao.getLastTraceByUser(user.getId());
+		User previousUserTrace = this.userDao.findById(user.getId());
 
 		if (previousUserTrace != null) {
 			previousUserTrace.setLastIdSession(previousUserTrace.getLastIdSession() + 1);

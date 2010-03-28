@@ -33,6 +33,8 @@ public class User {
 	private String city;
 	private String postalCode;
 	
+	public User() {}
+	
 	public User (String id) {
 		this.id = id;
 	}

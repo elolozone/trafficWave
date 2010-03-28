@@ -50,6 +50,7 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void save(UserTrace userTrace) {
 		Date now = new Date();
 		Date selectDate = new Date(now.getTime() - 1000 * IConstants.TEMPS_PONDERATION_RATIO_SEC);

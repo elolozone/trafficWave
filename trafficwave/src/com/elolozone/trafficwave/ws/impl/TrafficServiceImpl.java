@@ -125,7 +125,7 @@ public class TrafficServiceImpl implements TrafficService {
 		if (actualLocation == null) 
 			return "";
 		
-		//TODO : nombre de jours historique des itinéraires
+		//TODO : nombre de jours historique des itinÃ©raires
 		Collection<UserTrace> userTraces = this.userTraceManager.findUserDestinations(60*60*24*30, userId, actualLocation.getLatitude(), actualLocation.getLongitude());
 
 		if (userTraces != null) {
@@ -276,7 +276,7 @@ public class TrafficServiceImpl implements TrafficService {
 
 			Geo.Direction direction = Geo.getDirection(location.getCourse());
 
-			//  on récupére la vitesse moyenne et max et on enregistre la position
+			//  on rÃ©cupÃ©re la vitesse moyenne et max et on enregistre la position
 			GlobalTrace globalTraceAvgSport = this.getGlobalTraceManager().findAverageSpot(location.getLatitude(), location.getLongitude(), location.getCourse());
 			
 			if (globalTraceAvgSport != null) {

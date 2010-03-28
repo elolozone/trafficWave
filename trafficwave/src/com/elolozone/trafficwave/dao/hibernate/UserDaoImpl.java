@@ -30,10 +30,4 @@ public class UserDaoImpl extends GenericDaoImpl<User, String> implements UserDao
 		Query query = this.getSession().createQuery(deleteQuery);
 		return query.executeUpdate();
 	}
-
-	@Override
-	public User getLastTraceByUser(String userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.hibernate.Criteria;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Criterion;
 
 import org.springframework.dao.DataAccessException;
@@ -53,6 +54,9 @@ public class GenericDaoImpl<T, ID extends Serializable> extends HibernateDaoSupp
     	} catch (DataAccessException dataAccessException) {
     		LOG.error("FindByID exception : ", dataAccessException);
     		throw dataAccessException;
+    	} catch (ObjectNotFoundException onfe) {
+    		LOG.error("FindByID - ObjectNotFoundException : ", onfe);
+    		return null;
     	}
     }
 
