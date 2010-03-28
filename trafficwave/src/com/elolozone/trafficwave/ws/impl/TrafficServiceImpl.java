@@ -368,6 +368,7 @@ public class TrafficServiceImpl implements TrafficService {
 		return globalTraceManager;
 	}
 
+	@Autowired
 	public void setGlobalTraceManager(GlobalTraceManager globalTraceManager) {
 		this.globalTraceManager = globalTraceManager;
 	}
