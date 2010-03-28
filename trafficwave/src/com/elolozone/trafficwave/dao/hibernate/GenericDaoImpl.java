@@ -50,7 +50,7 @@ public class GenericDaoImpl<T, ID extends Serializable> extends HibernateDaoSupp
     	}
 
     	try {
-	        return (T) getHibernateTemplate().load(getPersistentClass(), id);
+	        return (T) getHibernateTemplate().get(getPersistentClass(), id);
     	} catch (DataAccessException dataAccessException) {
     		LOG.error("FindByID exception : ", dataAccessException);
     		throw dataAccessException;

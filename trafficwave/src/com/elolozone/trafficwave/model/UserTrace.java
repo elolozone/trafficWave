@@ -18,7 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 import com.elolozone.trafficwave.util.Geo;
 
 @Entity
-@Table(name = "user_trace")
+@Table(name = "tw_user_trace")
 public class UserTrace {
 
 	/**
@@ -139,7 +139,7 @@ public class UserTrace {
 		this.inTrafficAlert = inTrafficAlert;
 	}
 
-	@Temporal(value = TemporalType.DATE)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "in_traffic_decl_time")
 	public Date getInTrafficDeclaredTime() {
 		return inTrafficDeclaredTime;
@@ -289,7 +289,7 @@ public class UserTrace {
 		this.poleDirection = poleDirection;
 	}
 
-	@Temporal(value = TemporalType.DATE)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "last_location_date")
 	public Date getLastLocationDate() {
 		return lastLocationDate;
@@ -299,7 +299,7 @@ public class UserTrace {
 		this.lastLocationDate = lastLocationDate;
 	}
 
-	@Temporal(value = TemporalType.DATE)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "start_location_date")
 	public Date getStartLocationDate() {
 		return startLocationDate;

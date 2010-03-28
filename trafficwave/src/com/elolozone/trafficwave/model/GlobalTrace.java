@@ -4,11 +4,19 @@ import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import com.elolozone.trafficwave.util.Geo;
 
+@Entity
+@Table(name = "tw_global_trace")
 public class GlobalTrace { 
 
 	/**
@@ -16,6 +24,7 @@ public class GlobalTrace {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String id;
 	private Double longitude;
 	private Double latitude;
 	private Double sumSpeed;
@@ -31,6 +40,18 @@ public class GlobalTrace {
 		this.maxSpeed = maxSpeed;
 		this.direction = direction.getValue();
 		this.lastLocationDate = lastLocationDate;
+	}
+	
+	@Id
+	@GeneratedValue(generator = "strategy-uuid")
+	@GenericGenerator(name = "strategy-uuid", strategy = "uuid")
+	@Column(name = "id", nullable = false, length = 32)
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Basic
@@ -93,7 +114,7 @@ public class GlobalTrace {
 		this.nbPoints = nbPoints;
 	}
 
-	@Temporal(value = TemporalType.DATE)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "last_location_date")
 	public Date getLastLocationDate() {
 		return lastLocationDate;

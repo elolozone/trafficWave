@@ -48,15 +48,14 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getNews(String userId) {
-		User userTrace = new User(userId);
-		this.getUserTraceManager().save(userTrace);
+		User currentUser = this.getUserTraceManager().connect(userId);
 		
 		return 
 				"\n\nActuellement : "+String.valueOf(locations.size()) + " utilisateurs connectes."+
-				"\n\nVous avez utilise "+userTrace.getLastIdSession().toString() +" fois l'application."+ 
+				"\n\nVous avez utilise "+currentUser.getLastIdSession().toString() +" fois l'application."+ 
 				"\n\n"+
 				"--> L'application est en beta: utilisez la quand vous pouvez pour permettre d'alimenter les bases de donnees route.Merci!$"
-				+userTrace.getLastIdSession().toString() + "&";
+				+currentUser.getLastIdSession().toString() + "&";
 	}
 
 	/**

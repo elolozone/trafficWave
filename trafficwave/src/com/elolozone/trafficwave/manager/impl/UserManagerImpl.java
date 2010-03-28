@@ -40,21 +40,25 @@ public class UserManagerImpl extends GenericManagerImpl<User, String> implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public void save(User user) {
-		// Be careful: the userTrace object must be initialized with values before
-		// the call of this method !
-		User previousUserTrace = this.userDao.findById(user.getId());
+	public User connect(String idUser) {
+		User previousUserTrace = this.userDao.findById(idUser);
 
 		if (previousUserTrace != null) {
 			previousUserTrace.setLastIdSession(previousUserTrace.getLastIdSession() + 1);
 			previousUserTrace.setLastConnectionTime(new Date());
 			
 			this.userDao.update(previousUserTrace);
-		} else {
-			user.setLastIdSession(1);
-			user.setLastConnectionTime(new Date());
 			
-			this.userDao.save(user);
+			return previousUserTrace;
+		} else {
+			User newUser = new User();
+			newUser.setId(idUser);
+			newUser.setLastIdSession(1);
+			newUser.setLastConnectionTime(new Date());
+			
+			this.userDao.save(newUser);
+			
+			return newUser;
 		}
 	}
 }

@@ -8,4 +8,5 @@ import com.elolozone.trafficwave.model.User;
  */
 public interface UserManager extends GenericManager<User, String> {
 
+	User connect(String idUser);
 }

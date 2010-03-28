@@ -5,16 +5,13 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.GenericGenerator;
-
 @Entity
-@Table(name = "user")
+@Table(name = "tw_user")
 public class User {
 	
 	/**
@@ -27,11 +24,6 @@ public class User {
 	private Integer totalTime;
 	private Integer runningMeter;
 	private Date lastConnectionTime;
-	private String email;
-	private String firstName;
-	private String lastName;
-	private String city;
-	private String postalCode;
 	
 	public User() {}
 	
@@ -40,8 +32,6 @@ public class User {
 	}
 
 	@Id
-	@GeneratedValue(generator = "strategy-uuid")
-	@GenericGenerator(name = "strategy-uuid", strategy = "uuid")
 	@Column(name = "id", nullable = false, length = 32)
 	public String getId() {
 		return id;
@@ -81,7 +71,7 @@ public class User {
 		this.runningMeter = runningMeter;
 	}
 
-	@Temporal(value = TemporalType.DATE)
+	@Temporal(value = TemporalType.TIMESTAMP)
 	@Column(name = "last_connection_time")
 	public Date getLastConnectionTime() {
 		return lastConnectionTime;
@@ -89,55 +79,5 @@ public class User {
 
 	public void setLastConnectionTime(Date lastConnectionTime) {
 		this.lastConnectionTime = lastConnectionTime;
-	}
-
-	@Basic
-	@Column(name = "email")
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	@Basic
-	@Column(name = "first_name")
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	@Basic
-	@Column(name = "last_name")
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	@Basic
-	@Column(name = "city")
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	@Basic
-	@Column(name = "postal_code")
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
 	}
 }

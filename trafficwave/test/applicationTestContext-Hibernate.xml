@@ -7,19 +7,8 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
     
-    <!-- 
 	<jdbc:embedded-database id="dataSource" type="HSQL">
 	</jdbc:embedded-database>
-	-->
-	
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<!-- <property name="url" value="jdbc:postgresql://10.226.165.207:5432/sogis" /> -->
-		<property name="url" value="jdbc:postgresql://localhost:5432/trafficwave" />
-		<property name="username" value="postgres" />
-		<property name="password" value="postgres" />
-	</bean>
 	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
@@ -40,7 +29,7 @@
 		</property>
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.bytecode.use_reflection_optimizer">true</prop>
 				<prop key="TransactionStrategy">org.hibernate.transaction.JTATransactionFactory</prop>
@@ -51,6 +40,8 @@
 				<prop key="hibernate.c3p0.max_statements">50</prop>
 				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+				
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
 			</props>
 		</property>
 	</bean>
