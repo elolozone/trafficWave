@@ -1,5 +1,7 @@
 package com.elolozone.trafficwave.manager;
 
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ public class UserManagerTest extends BaseTest {
 	
 	@Test
 	public void testConnect() {
-		String idUser = "toto";
+		String idUser = "1A2B3C4D5E6F";
 		
 		User firstUser = userManager.connect(idUser);
 		
@@ -23,12 +25,14 @@ public class UserManagerTest extends BaseTest {
 		Assert.assertEquals(firstUser.getId(), idUser);
 		Assert.assertTrue(firstUser.getLastIdSession() == 1);
 		
+		Date lastConnectionTime = firstUser.getLastConnectionTime();
+		
 		User nextConnectionUser = userManager.connect(idUser);
 		
 		Assert.assertNotNull(nextConnectionUser);
 		Assert.assertEquals(nextConnectionUser.getId(), idUser);
 		Assert.assertTrue(nextConnectionUser.getLastIdSession() == 2);
 		
-		Assert.assertTrue(firstUser.getLastConnectionTime().before(nextConnectionUser.getLastConnectionTime()));
+		Assert.assertTrue(lastConnectionTime.before(nextConnectionUser.getLastConnectionTime()));
 	}
 }
