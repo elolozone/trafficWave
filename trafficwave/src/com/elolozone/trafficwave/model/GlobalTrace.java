@@ -16,7 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 import com.elolozone.trafficwave.util.Geo;
 
 @Entity
-@Table(name = "tw_global_trace")
+@Table(name = "global_trace")
 public class GlobalTrace { 
 
 	/**

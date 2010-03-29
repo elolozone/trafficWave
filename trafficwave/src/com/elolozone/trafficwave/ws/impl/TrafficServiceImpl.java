@@ -48,7 +48,7 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getNews(String userId) {
-		User currentUser = this.getUserTraceManager().connect(userId);
+		User currentUser = this.getUserManager().connect(userId);
 		
 		return 
 				"\n\nActuellement : "+String.valueOf(locations.size()) + " utilisateurs connectes."+
@@ -62,7 +62,7 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String getPaths(String userId, int sessionId) {
-		List<UserTrace> userStats = this.getUserStatManager().findBySessionAndUser(sessionId, userId); 
+		List<UserTrace> userStats = this.getUserTraceManager().findBySessionAndUser(sessionId, userId); 
 		
 		if (userStats != null)  {
 			StringBuilder sb = new StringBuilder();
@@ -81,7 +81,7 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String identifyTrafficJob() {
-		List<UserTrace> userStats = this.getUserStatManager().findUserInTraffic(IConstants.ACTIF_USER_MAX_SEC, IConstants.DUREE_TODECLARE_BOUCHON_SEC);
+		List<UserTrace> userStats = this.getUserTraceManager().findUserInTraffic(IConstants.ACTIF_USER_MAX_SEC, IConstants.DUREE_TODECLARE_BOUCHON_SEC);
 
 		if (userStats != null) {
 			
@@ -177,7 +177,7 @@ public class TrafficServiceImpl implements TrafficService {
 	public String listUserStat() {
 		StringBuilder sb = new StringBuilder("Latitude,Longitude,maxSpeed,Ratio,RatioPond,AvgSpeed,time,surfDiff,surfVmoy,idUser,speed,umSurfVmoy\n");
 		
-		List<UserTrace> userStats = this.getUserStatManager().findAllAndOrderBy("lastLocationDate", Boolean.FALSE);
+		List<UserTrace> userStats = this.getUserTraceManager().findAllAndOrderBy("lastLocationDate", Boolean.FALSE);
 		
 		for (UserTrace userStat : userStats) {
 			sb.append(userStat.getLatitude()).append(',').
@@ -345,22 +345,22 @@ public class TrafficServiceImpl implements TrafficService {
 		return x.toString() + '|' + y.toString();
 	}
 
-	public UserManager getUserTraceManager() {
+	public UserManager getUserManager() {
 		return userManager;
 	}
 
 	@Autowired
-	public void setUserTraceManager(UserManager userTraceManager) {
-		this.userManager = userTraceManager;
+	public void setUserManager(UserManager userManager) {
+		this.userManager = userManager;
 	}
 
-	public UserTraceManager getUserStatManager() {
+	public UserTraceManager getUserTraceManager() {
 		return userTraceManager;
 	}
 
 	@Autowired
-	public void setUserStatManager(UserTraceManager userStatManager) {
-		this.userTraceManager = userStatManager;
+	public void setUserTraceManager(UserTraceManager userTraceManager) {
+		this.userTraceManager = userTraceManager;
 	}
 
 	public GlobalTraceManager getGlobalTraceManager() {

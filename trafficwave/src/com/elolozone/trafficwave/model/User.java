@@ -11,7 +11,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "tw_user")
+@Table(name = "user")
 public class User {
 	
 	/**

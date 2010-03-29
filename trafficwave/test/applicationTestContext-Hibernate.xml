@@ -10,8 +10,13 @@
 	<jdbc:embedded-database id="dataSource" type="HSQL">
 	</jdbc:embedded-database>
 	
+	<bean id="namingStrategy" class="com.elolozone.trafficwave.dao.hibernate.naming.CustomNamingStrategy"/>
+	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="namingStrategy">
+			<ref bean="namingStrategy"/>
+		</property>
 		<property name="dataSource">
 			<ref bean="dataSource" />
 		</property>
