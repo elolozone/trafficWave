@@ -13,6 +13,7 @@ import com.elolozone.trafficwave.dao.api.GlobalTraceDao;
 import com.elolozone.trafficwave.manager.api.GlobalTraceManager;
 import com.elolozone.trafficwave.model.GlobalTrace;
 import com.elolozone.trafficwave.util.Geo;
+import com.elolozone.trafficwave.util.Math;
 
 /**
  * Implementation of {@link GlobalTraceManager} interface.
@@ -43,8 +44,8 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 	 * {@inheritDoc}
 	 */
 	public void save(GlobalTrace globalTrace) {
-		globalTrace.setLatitude(gridConvertion(globalTrace.getLatitude()));
-		globalTrace.setLongitude(gridConvertion(globalTrace.getLongitude()));
+		globalTrace.setLatitude(Math.gridConvertion(globalTrace.getLatitude()));
+		globalTrace.setLongitude(Math.gridConvertion(globalTrace.getLongitude()));
 		
 		List<GlobalTrace> lstGlobalTraces = this.globalTraceDao.findBy(
 				globalTrace.getLatitude(), globalTrace.getLongitude(), globalTrace.getDirection());
@@ -69,13 +70,6 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 			globalTrace.setNbPoints(1);
 			this.globalTraceDao.save(globalTrace);
 		}
-	}
-	
-	static private Double gridConvertion(Double pos) {
-		BigDecimal bdPos;
-		bdPos = BigDecimal.valueOf(pos);
-		bdPos = bdPos.setScale(4, BigDecimal.ROUND_DOWN);
-		return Double.valueOf(bdPos.doubleValue());
 	}
 
 	/**
