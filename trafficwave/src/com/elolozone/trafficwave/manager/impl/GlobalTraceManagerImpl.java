@@ -49,8 +49,8 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 		
 		List<GlobalTrace> lstGlobalTraces = this.globalTraceDao.findBy(
 				globalTrace.getLatitude(), globalTrace.getLongitude(), globalTrace.getDirection());
-		
-		if (lstGlobalTraces.size() == 1) {
+
+		if (lstGlobalTraces != null &&  lstGlobalTraces.size() == 1) {
 			GlobalTrace globalTracePersisted = lstGlobalTraces.get(0);
 
 			globalTracePersisted.setSumSpeed(globalTracePersisted.getSumSpeed()
