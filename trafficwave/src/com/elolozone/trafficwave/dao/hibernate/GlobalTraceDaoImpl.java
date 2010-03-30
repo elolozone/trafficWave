@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.elolozone.trafficwave.dao.api.GlobalTraceDao;
 import com.elolozone.trafficwave.model.GlobalTrace;
+import com.elolozone.trafficwave.util.Math; 
 
 @Repository(value = "globalTraceDao")
 public class GlobalTraceDaoImpl extends GenericDaoImpl<GlobalTrace, String> implements GlobalTraceDao {
@@ -55,9 +56,9 @@ public class GlobalTraceDaoImpl extends GenericDaoImpl<GlobalTrace, String> impl
 		Criteria critQuery = this.getSession().createCriteria(GlobalTrace.class);
 		
 		critQuery.
-			add(Restrictions.eq("latitude", latitude)).
-			add(Restrictions.eq("longitude", longitude)).
-			add(Restrictions.gt("direction", direction));
+			add(Restrictions.eq("latitude", Math.gridConvertion(latitude))).
+			add(Restrictions.eq("longitude", Math.gridConvertion(longitude))).
+			add(Restrictions.eq("direction", direction));
 		
 		// We need only the first GlobalTrace so max result equals to 1
 		critQuery.setMaxResults(1);

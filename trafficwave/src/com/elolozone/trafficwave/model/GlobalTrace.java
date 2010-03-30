@@ -123,4 +123,18 @@ public class GlobalTrace {
 	public void setLastLocationDate(Date lastLocationDate) {
 		this.lastLocationDate = lastLocationDate;
 	}
+
+	public GlobalTrace(String id, Double longitude, Double latitude,
+			Double sumSpeed, Double maxSpeed, Integer direction,
+			Integer nbPoints, Date lastLocationDate) {
+		super();
+		this.id = id;
+		this.longitude = longitude;
+		this.latitude = latitude;
+		this.sumSpeed = sumSpeed;
+		this.maxSpeed = maxSpeed;
+		this.direction = direction;
+		this.nbPoints = nbPoints;
+		this.lastLocationDate = lastLocationDate;
+	}
 }
