@@ -51,6 +51,7 @@ public class UserTrace {
 	private Date startLocationDate;
 	private boolean lastLocation;
 	
+	public UserTrace () {};
 	public UserTrace (String idUser, 
 			Integer idSession,
 			Double longitude, 

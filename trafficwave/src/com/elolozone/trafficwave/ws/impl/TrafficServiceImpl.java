@@ -281,12 +281,12 @@ public class TrafficServiceImpl implements TrafficService {
 			if (globalTraceAvgSport != null) {
 				Double maxSpeed = globalTraceAvgSport.getMaxSpeed();
 				Double moySpeed = globalTraceAvgSport.getSumSpeed() / globalTraceAvgSport.getNbPoints();
-				boolean inTrafficUser;
+				boolean inTrafficUser=false;
 				
-				if (location.getInTrafficUser().equals("TRUE")) 
-					inTrafficUser = true;
-				else 
-					inTrafficUser = false;
+				if (location.getInTrafficUser() != null && location.getInTrafficUser().equals("TRUE")) 
+						inTrafficUser = true;
+				if (location.getInTrafficUser() == null || location.getInTrafficUser().equals("FALSE"))
+						inTrafficUser = false;
 						
 				userTrace = new UserTrace(
 						location.getIdUser(),
