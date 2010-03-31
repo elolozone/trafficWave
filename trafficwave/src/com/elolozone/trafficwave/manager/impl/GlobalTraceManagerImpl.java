@@ -47,12 +47,11 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 		globalTrace.setLatitude(Math.gridConvertion(globalTrace.getLatitude()));
 		globalTrace.setLongitude(Math.gridConvertion(globalTrace.getLongitude()));
 		
-		List<GlobalTrace> lstGlobalTraces = this.globalTraceDao.findBy(
+		GlobalTrace globalTracePersisted = this.globalTraceDao.findBy(
 				globalTrace.getLatitude(), globalTrace.getLongitude(), globalTrace.getDirection());
 
-		if (lstGlobalTraces != null &&  lstGlobalTraces.size() == 1) {
-			GlobalTrace globalTracePersisted = lstGlobalTraces.get(0);
-
+		if (globalTracePersisted != null ) {
+		
 			globalTracePersisted.setSumSpeed(globalTracePersisted.getSumSpeed()
 					+ globalTrace.getSumSpeed());
 
@@ -75,7 +74,7 @@ public class GlobalTraceManagerImpl extends GenericManagerImpl<GlobalTrace, Stri
 	/**
 	 * {@inheritDoc}
 	 */
-	public GlobalTrace findAverageSpot(Double latitude, Double longitude, Double angle) {
-		return this.globalTraceDao.findAverageSpot(latitude, longitude, Geo.getDirection(angle).getValue());
+	public GlobalTrace findBy(Double latitude, Double longitude, Double angle) {
+		return this.globalTraceDao.findBy(latitude, longitude, Geo.getDirection(angle).getValue());
 	}
 }

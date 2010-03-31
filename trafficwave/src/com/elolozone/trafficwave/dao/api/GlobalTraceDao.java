@@ -10,9 +10,8 @@ import com.elolozone.trafficwave.model.GlobalTrace;
  */
 public interface GlobalTraceDao extends GenericDao<GlobalTrace, String> {
 
-	List<GlobalTrace> findBy(Double latitude, Double longitude, Integer direction);
+	GlobalTrace findBy(Double latitude, Double longitude, Integer direction);
 	
 	int deleteAll();
 	
-	GlobalTrace findAverageSpot(Double latitude, Double longitude, Integer direction);
 }

@@ -29,14 +29,6 @@ public class GlobalTraceDaoImpl extends GenericDaoImpl<GlobalTrace, String> impl
 		super.setSessionFactory(sessionFactory);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public List<GlobalTrace> findBy(Double latitude, Double longitude,
-			Integer direction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -51,7 +43,7 @@ public class GlobalTraceDaoImpl extends GenericDaoImpl<GlobalTrace, String> impl
 	/**
 	 * {@inheritDoc}
 	 */
-	public GlobalTrace findAverageSpot(Double latitude, Double longitude,
+	public GlobalTrace findBy(Double latitude, Double longitude,
 			Integer direction) {
 		Criteria critQuery = this.getSession().createCriteria(GlobalTrace.class);
 		

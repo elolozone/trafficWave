@@ -8,5 +8,5 @@ import com.elolozone.trafficwave.model.GlobalTrace;
  */
 public interface GlobalTraceManager extends GenericManager<GlobalTrace, String> {
 
-	GlobalTrace findAverageSpot(Double latitude, Double longitude, Double angle);
+	GlobalTrace findBy(Double latitude, Double longitude, Double angle);
 }

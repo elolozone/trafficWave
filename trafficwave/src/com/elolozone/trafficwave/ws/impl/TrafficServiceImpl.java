@@ -203,7 +203,7 @@ public class TrafficServiceImpl implements TrafficService {
 	 * {@inheritDoc}
 	 */
 	public String averageSpot(double longitude, double latitude, double course) {
-		GlobalTrace globalTrace = this.getGlobalTraceManager().findAverageSpot(latitude, longitude, course);
+		GlobalTrace globalTrace = this.getGlobalTraceManager().findBy(latitude, longitude, course);
 		
 		if (globalTrace != null) {
 			// TODO: Some explanation about this calc, what is 3.6f ?
@@ -231,7 +231,7 @@ public class TrafficServiceImpl implements TrafficService {
 		for (Entry<String, Location> entry : locations.entrySet()) {
 			Location loc = entry.getValue();
 
-			GlobalTrace globalTrace = this.getGlobalTraceManager().findAverageSpot(loc.getLatitude(), loc.getLongitude(), loc.getCourse());
+			GlobalTrace globalTrace = this.getGlobalTraceManager().findBy(loc.getLatitude(), loc.getLongitude(), loc.getCourse());
 			
 			if (globalTrace != null) {
 				Double vitMax = globalTrace.getMaxSpeed() * 3.6f;
@@ -277,7 +277,7 @@ public class TrafficServiceImpl implements TrafficService {
 			Geo.Direction direction = Geo.getDirection(location.getCourse());
 
 			//  on rÃ©cupÃ©re la vitesse moyenne et max et on enregistre la position
-			GlobalTrace globalTraceAvgSport = this.getGlobalTraceManager().findAverageSpot(location.getLatitude(), location.getLongitude(), location.getCourse());
+			GlobalTrace globalTraceAvgSport = this.getGlobalTraceManager().findBy(location.getLatitude(), location.getLongitude(), location.getCourse());
 			
 			if (globalTraceAvgSport != null) {
 				Double maxSpeed = globalTraceAvgSport.getMaxSpeed();
