@@ -56,8 +56,8 @@ public class GlobalTraceDaoImpl extends GenericDaoImpl<GlobalTrace, String> impl
 		Criteria critQuery = this.getSession().createCriteria(GlobalTrace.class);
 		
 		critQuery.
-			add(Restrictions.eq("latitude", Math.gridConvertion(latitude))).
-			add(Restrictions.eq("longitude", Math.gridConvertion(longitude))).
+			add(Restrictions.eq("latitude", latitude)).
+			add(Restrictions.eq("longitude", longitude)).
 			add(Restrictions.eq("direction", direction));
 		
 		// We need only the first GlobalTrace so max result equals to 1

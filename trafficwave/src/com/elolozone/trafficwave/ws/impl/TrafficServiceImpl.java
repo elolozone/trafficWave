@@ -22,6 +22,7 @@ import com.elolozone.trafficwave.model.Location;
 import com.elolozone.trafficwave.model.User;
 import com.elolozone.trafficwave.model.UserTrace;
 import com.elolozone.trafficwave.util.Geo;
+import com.elolozone.trafficwave.util.Math;
 import com.elolozone.trafficwave.ws.api.TrafficService;
 
 /**
@@ -255,8 +256,8 @@ public class TrafficServiceImpl implements TrafficService {
 		Location location = new Location();
 
 		location.setIdUser(id);
-		location.setLongitude(longitude);
-		location.setLatitude(latitude);
+		location.setLongitude(Math.gridConvertion(longitude));
+		location.setLatitude(Math.gridConvertion(latitude));
 		location.setSpeed(speed);
 		location.setCourse(course);
 		location.setIdSession(idSession);
