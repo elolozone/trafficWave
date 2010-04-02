@@ -32,7 +32,7 @@ public class User {
 	}
 
 	@Id
-	@Column(name = "id", nullable = false, length = 32)
+	@Column(name = "id", nullable = false, length = 64)
 	public String getId() {
 		return id;
 	}
