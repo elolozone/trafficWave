@@ -345,6 +345,21 @@ public class TrafficServiceImpl implements TrafficService {
 		
 		return x.toString() + '|' + y.toString();
 	}
+	
+	public String getPositions(String userId) {
+		StringBuilder sb = new StringBuilder();
+		
+		for (Entry<String, Location> entry : locations.entrySet()) {
+			Location loc = entry.getValue();
+
+					sb.append(loc.getLatitude()).append(',').append(loc.getLongitude()).append(',').append(loc.getSpeed()).append(',').append(loc.getIdUser()).append(loc.isInTraffic()).append('&');
+				 
+			 
+		}
+		
+		return sb.toString();
+		
+	}
 
 	public UserManager getUserManager() {
 		return userManager;

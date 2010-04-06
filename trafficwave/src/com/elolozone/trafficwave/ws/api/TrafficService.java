@@ -50,6 +50,12 @@ public interface TrafficService {
 	@Produces(MediaType.TEXT_PLAIN)
 	String listDots();
 	
+	@Path("/getPositions/{user}")
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	String getPositions(@PathParam ("user") String userId); 
+	
+	
 	@Path("/averageSpot")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
