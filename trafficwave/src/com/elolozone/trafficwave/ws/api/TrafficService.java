@@ -10,7 +10,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * The main interface which define all Traffic engine services.
  * 
- * @author brasseld@gmail.com
+ * 
+ * @author brasseld@gmail.com 
  * @since 19-03-2010 
  */
 public interface TrafficService {
