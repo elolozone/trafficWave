@@ -336,7 +336,7 @@ public class TrafficServiceImpl implements TrafficService {
 			x.append(userTrace.getLastLocationDate().getTime()).append(',');
 			y.append(userTrace.getRatioPond()).append(',');
 		}
-		
+		 
 		if (x.length() != 0)
 			x.deleteCharAt(x.length() - 1);
 		if (y.length() != 0) {
@@ -352,7 +352,12 @@ public class TrafficServiceImpl implements TrafficService {
 		for (Entry<String, Location> entry : locations.entrySet()) {
 			Location loc = entry.getValue();
 
-					sb.append(loc.getLatitude()).append(',').append(loc.getLongitude()).append(',').append(loc.getSpeed()).append(',').append(loc.getIdUser()).append(loc.isInTraffic()).append('&');
+					sb.append(loc.getLatitude()).append(',').
+					append(loc.getLongitude()).append(',').
+					append(loc.getSpeed()).append(',').
+					append(loc.getCourse()).append(',').
+					append(loc.getIdUser()).append(',').
+					append(loc.isInTraffic()).append('&');
 				 
 			 
 		}

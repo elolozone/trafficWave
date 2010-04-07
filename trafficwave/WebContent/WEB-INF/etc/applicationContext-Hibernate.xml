@@ -18,7 +18,7 @@
 		<!-- <property name="url" value="jdbc:postgresql://10.226.165.207:5432/sogis" /> -->
 		<property name="url" value="jdbc:postgresql://localhost:5432/trafficwave" />
 		<property name="username" value="postgres" />
-		<property name="password" value="postgres" />
+		<property name="password" value="sapiens" /> 
 	</bean>
 	
 	<bean id="namingStrategy" class="com.elolozone.trafficwave.dao.hibernate.naming.CustomNamingStrategy"/>
@@ -56,6 +56,8 @@
 				<prop key="hibernate.c3p0.max_statements">50</prop>
 				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+				
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
 			</props>
 		</property>
 	</bean>
