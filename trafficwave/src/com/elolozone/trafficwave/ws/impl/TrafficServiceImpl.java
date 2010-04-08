@@ -278,10 +278,17 @@ public class TrafficServiceImpl implements TrafficService {
 
 			//  on rÃ©cupÃ©re la vitesse moyenne et max et on enregistre la position
 			GlobalTrace globalTraceAvgSport = this.getGlobalTraceManager().findBy(location.getLatitude(), location.getLongitude(), location.getCourse());
-			
+			Double maxSpeed = null;
+			Double moySpeed = null;
 			if (globalTraceAvgSport != null) {
-				Double maxSpeed = globalTraceAvgSport.getMaxSpeed();
-				Double moySpeed = globalTraceAvgSport.getSumSpeed() / globalTraceAvgSport.getNbPoints();
+				maxSpeed = globalTraceAvgSport.getMaxSpeed();
+				moySpeed = globalTraceAvgSport.getSumSpeed() / globalTraceAvgSport.getNbPoints();	
+			}
+			else
+			{
+				maxSpeed = location.getSpeed();
+				moySpeed = location.getSpeed();
+			}
 				boolean inTrafficUser=false;
 				
 				if (location.getInTrafficUser() != null && location.getInTrafficUser().equals("TRUE")) 
@@ -301,7 +308,7 @@ public class TrafficServiceImpl implements TrafficService {
 						new Date(), false, null, inTrafficUser);
 
 				this.userTraceManager.save(userTrace);
-			}
+			
 
 			if (location.getSpeed() > -1 && location.getCourse() > -1) {
 				GlobalTrace globalTrace = new GlobalTrace(
@@ -359,7 +366,7 @@ public class TrafficServiceImpl implements TrafficService {
 					append(loc.getIdUser()).append(',').
 					append(loc.isInTraffic()).append('&');
 				 
-			 
+			  
 		}
 		
 		return sb.toString();
