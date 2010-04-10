@@ -127,7 +127,7 @@ public class UserTraceDaoImpl extends GenericDaoImpl<UserTrace, String> implemen
 			add(Restrictions.eq("idUser", idUser)).
 			add(Restrictions.eq("idSession", idSession)).
 			add(Restrictions.gt("lastLocationDate", selectDate));
-		
+		critQuery.addOrder( Order.desc("lastLocationDate") );
 		return (List<UserTrace>) critQuery.list();
 	}
 

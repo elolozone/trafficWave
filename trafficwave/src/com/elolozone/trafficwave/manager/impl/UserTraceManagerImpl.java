@@ -59,6 +59,7 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 		
 		if (! lstUserTrace.isEmpty()) {
 			UserTrace previous = lstUserTrace.get(0);
+			UserTrace first = lstUserTrace.get(lstUserTrace.size()-1);
 			
 			previous.setLastLocation(false);
 			userTrace.setLastLocation(true);
@@ -87,14 +88,24 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 			}
 			
 			double ratioPond = cumulRatio / lstUserTrace.size();
-			userTrace.setRatioPond(ratioPond);
+			
+			// ne prends pas en compte les premières minutes de pondération car pas valide.
+			if (first.getLastLocationDate().after(selectDate))
+				{
+				 userTrace.setRatioPond(0.0);
+				}
+			else
+				{
+				
+				 userTrace.setRatioPond(ratioPond);
+				}
 
-			// vitesse incorecte
+	
 			if (ratioPond > IConstants.RATIO_DECLENCHEMENT_BOUCHON && 
 					userTrace.getSpeed() <= IConstants.VITESSE_MAX_BOUCHON_KMH / 3.6d)
 			{
 				if (! previous.getInTraffic()) {
-					// c'est nouveau 
+					
 					userTrace.setInTraffic(true);
 					userTrace.setInTrafficDeclaredTime(new Date());
 				}
@@ -135,7 +146,7 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 		
 		double precision = 0.005d;
 		Date now = new Date();
-		Date selectDate = new Date(now.getTime() - 1000 * destinationDepuisSec);
+		Date selectDate = new Date(now.getTime() + 1000 * destinationDepuisSec);
 		
 		List<UserTrace> availableUserTraces = this.userTraceDao.findByUserAndLowerThanLastLocationDate(idUser, selectDate);
 		Map<Integer, UserTrace> selectedUserTracesResult = null;
