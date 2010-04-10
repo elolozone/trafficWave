@@ -58,10 +58,10 @@ public class UserTraceDaoImpl extends GenericDaoImpl<UserTrace, String> implemen
 			add(Restrictions.gt("lastLocationDate", selectDate));
 		
 		if (sessionId != -1) {
-			critQuery.add(Restrictions.like("idSession", sessionId));
+			critQuery.add(Restrictions.eq("idSession", sessionId));
 		}
 		
-		critQuery.addOrder(Order.desc("lastLocationDate"));
+		critQuery.addOrder(Order.asc("lastLocationDate"));
 		
 		// On veut voir que les 150 derniers points
 		critQuery.setMaxResults(IConstants.NBRE_POINT_TOGRAPH);
