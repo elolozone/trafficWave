@@ -22,24 +22,6 @@ import com.sun.jersey.api.json.JSONJAXBContext;
  */
 public interface JsonService {
 
-	@Provider
-	public static class JAXBContextResolver implements ContextResolver<JAXBContext> {
-
-		private JAXBContext context;
-		private Class[] types = {Person.class};
-	
-		public JAXBContextResolver() throws Exception {
-			Map<String, Object> props = new HashMap<String, Object>();
-			props.put(JSONJAXBContext.JSON_NOTATION, "MAPPED_JETTISON");
-			props.put(JSONJAXBContext.JSON_ROOT_UNWRAPPING, Boolean.FALSE);
-			this.context = new JSONJAXBContext(types, props);
-		}
-	
-		public JAXBContext getContext(Class<?> objectType) {
-			return (types[0].equals(objectType)) ? context : null;
-		}
-	}
-	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	// Pour tester, appeler l'url suivante : http://localhost:8080/trafficwave/ws/json
