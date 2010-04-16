@@ -41,6 +41,7 @@
 				<value>com.elolozone.trafficwave.model.User</value>
 				<value>com.elolozone.trafficwave.model.UserTrace</value>
 				<value>com.elolozone.trafficwave.model.GlobalTrace</value>
+				<value>com.elolozone.trafficwave.model.UserTarget</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
@@ -57,7 +58,11 @@
 				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
 				
-				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				
+				<prop key="hibernate.hbm2ddl.auto">update</prop> 
+				 <!-- 
+				 <prop key="hibernate.hbm2ddl.auto">create</prop> 
+				 -->
 			</props>
 		</property>
 	</bean>
