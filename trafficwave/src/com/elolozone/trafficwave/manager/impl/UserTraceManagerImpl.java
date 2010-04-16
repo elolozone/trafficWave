@@ -183,7 +183,6 @@ public class UserTraceManagerImpl extends GenericManagerImpl<UserTrace, String> 
 						Double nLa = Math.roundDown(userTrace.getLatitude(), 2);
 						Double nLo = Math.roundDown(userTrace.getLongitude(), 2);
 								
-						// uniquement les idSession selectionnées
 						userTraceResult.put(nLa.toString()+nLo.toString(), userTrace);
 					}
 				}

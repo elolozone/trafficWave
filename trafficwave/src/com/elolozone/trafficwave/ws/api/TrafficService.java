@@ -36,6 +36,11 @@ public interface TrafficService {
 	@Produces(MediaType.TEXT_PLAIN)
 	String imagineUserDestination(@PathParam ("user") String userId);
 	
+	@Path("/proposeTargets/{user}")
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	String imagineUserTarget(@PathParam ("user") String userId);
+	
 	@Path("/listGlobalTrace")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)

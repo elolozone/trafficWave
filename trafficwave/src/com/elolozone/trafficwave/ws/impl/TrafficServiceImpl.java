@@ -15,11 +15,13 @@ import org.springframework.stereotype.Component;
 
 import com.elolozone.trafficwave.constants.IConstants;
 import com.elolozone.trafficwave.manager.api.GlobalTraceManager;
+import com.elolozone.trafficwave.manager.api.UserTargetManager;
 import com.elolozone.trafficwave.manager.api.UserTraceManager;
 import com.elolozone.trafficwave.manager.api.UserManager;
 import com.elolozone.trafficwave.model.GlobalTrace;
 import com.elolozone.trafficwave.model.Location;
 import com.elolozone.trafficwave.model.User;
+import com.elolozone.trafficwave.model.UserTarget;
 import com.elolozone.trafficwave.model.UserTrace;
 import com.elolozone.trafficwave.util.Geo;
 import com.elolozone.trafficwave.util.Math;
@@ -39,6 +41,7 @@ public class TrafficServiceImpl implements TrafficService {
 	private GlobalTraceManager globalTraceManager;
 	private UserManager userManager;
 	private UserTraceManager userTraceManager;
+	private UserTargetManager userTargetManager;
 	
 	/**
 	 * Hold current users location.
@@ -127,12 +130,13 @@ public class TrafficServiceImpl implements TrafficService {
 		
 		//TODO : nombre de jours historique des itinÃ©raires
 		Collection<UserTrace> userTraces = this.userTraceManager.findUserDestinations(60*60*24*30, userId, actualLocation.getLatitude(), actualLocation.getLongitude());
+		
 
 		if (userTraces != null) {
 			StringBuilder sb = new StringBuilder();
 			
 			for (UserTrace userTrace : userTraces) { 
-				// iti 1, iti 2
+			
 				sb.append(userTrace.getIdUser()).append(',').
 					append(userTrace.getLastLocationDate()).append(',').
 					append("0,").
@@ -151,6 +155,42 @@ public class TrafficServiceImpl implements TrafficService {
 		return "NO ITI";
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String imagineUserTarget(String userId) {
+		Location actualLocation =  locations.get(userId);
+		
+		if (actualLocation == null) 
+			return "";
+		
+		//TODO : nombre de jours historique des itinÃ©raires
+		Collection<UserTarget> userTargets = this.userTargetManager.findUserDestinations(60*60*24*30, userId, actualLocation.getLatitude(), actualLocation.getLongitude());
+		if (userTargets != null) {
+			StringBuilder sb = new StringBuilder();
+			if (userTargets.size() == 0) return "NO TARGETS";
+			for (UserTarget userTarget : userTargets) { 
+			
+				sb.append(userTarget.getIdUser()).append(',').
+					append("hein").append(',').
+					append("0,").
+					append("0,").
+					append(userTarget.getDestLatitude()).append(',').
+					append(userTarget.getDestLongitude()).append(',').
+					append(userTarget.getMinTrackTimeSec()*1.15).append(',').
+					append(userTarget.getMinTrackTimeSec()*1.15).append(',').
+					append(userTarget.getIdSessionMinTime()).
+					append(userTarget.getIdSessionMaxTime()).
+					append(",null&\n");
+			}
+			
+			return sb.toString();
+		}
+		
+		return "NO TARGETS";
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -390,11 +430,18 @@ public class TrafficServiceImpl implements TrafficService {
 	public void setUserTraceManager(UserTraceManager userTraceManager) {
 		this.userTraceManager = userTraceManager;
 	}
+	
+	@Autowired
+	public void setUserTargetManager(UserTargetManager userTargetManager) {
+		this.userTargetManager = userTargetManager;
+	}
+	
 
 	public GlobalTraceManager getGlobalTraceManager() {
 		return globalTraceManager;
 	}
 
+	
 	@Autowired
 	public void setGlobalTraceManager(GlobalTraceManager globalTraceManager) {
 		this.globalTraceManager = globalTraceManager;

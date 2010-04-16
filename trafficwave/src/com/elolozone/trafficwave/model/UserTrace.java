@@ -318,5 +318,11 @@ public class UserTrace {
 
 	public void setLastLocation(boolean lastLocation) {
 		this.lastLocation = lastLocation;
+	} 
+	
+	public int calcTrackTimeInSec () {
+		if (this.getLastLocationDate() != null && this.getStartLocationDate() != null) 
+		 return (int)((this.getLastLocationDate().getTime() - this.getStartLocationDate().getTime())/1000  );
+		else return Integer.MAX_VALUE;
 	}
 }
