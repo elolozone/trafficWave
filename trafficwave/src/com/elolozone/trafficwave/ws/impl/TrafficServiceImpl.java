@@ -172,17 +172,15 @@ public class TrafficServiceImpl implements TrafficService {
 			if (userTargets.size() == 0) return "NO TARGETS";
 			for (UserTarget userTarget : userTargets) { 
 			
-				sb.append(userTarget.getIdUser()).append(',').
-					append("hein").append(',').
-					append("0,").
-					append("0,").
+				sb.append(userId).append(',').
 					append(userTarget.getDestLatitude()).append(',').
 					append(userTarget.getDestLongitude()).append(',').
-					append(userTarget.getMinTrackTimeSec()*1.15).append(',').
-					append(userTarget.getMinTrackTimeSec()*1.15).append(',').
-					append(userTarget.getIdSessionMinTime()).
-					append(userTarget.getIdSessionMaxTime()).
-					append(",null&\n");
+					append((int)(userTarget.getMinTrackTimeSec()*1.15)).append(',').
+					append((int)(userTarget.getMinTrackTimeSec()*1.15)).append(',').
+					append(userTarget.getIdSessionMinTime()).append(',').
+					append(userTarget.getIdSessionMaxTime()).append(',').
+					append(userTarget.getNbTrackPossible()).append(',').
+					append("null&\n");
 			}
 			
 			return sb.toString();

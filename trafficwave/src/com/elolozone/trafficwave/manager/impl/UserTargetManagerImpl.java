@@ -95,7 +95,7 @@ public class UserTargetManagerImpl   extends GenericManagerImpl<UserTarget, Stri
 		
 		availableUserTraces = this.userTraceDao.findByUserAndLastLocationAndLowerThanLastLocationDate(idUser, Boolean.TRUE, selectDate);
 		
-		Map<String, UserTrace> userTraceResult = new HashMap<String, UserTrace>();
+		//Map<String, UserTrace> userTraceResult = new HashMap<String, UserTrace>();
 		Map<String, UserTarget> userTargetResult = new HashMap<String, UserTarget>();
 		
 		if (! availableUserTraces.isEmpty()) {
@@ -108,8 +108,9 @@ public class UserTargetManagerImpl   extends GenericManagerImpl<UserTarget, Stri
 							
 							Double nLa = Math.roundDown(userTrace.getLatitude(), 2);
 							Double nLo = Math.roundDown(userTrace.getLongitude(), 2);
-									
+							/*		
 							userTraceResult.put(nLa.toString()+nLo.toString(), userTrace);
+							*/
 							//
 							UserTarget userTarget = userTargetResult.get(nLa.toString()+nLo.toString());
 							if (userTarget==null)
@@ -128,6 +129,7 @@ public class UserTargetManagerImpl   extends GenericManagerImpl<UserTarget, Stri
 								
 							}
 							userTarget.setNbTrackPossible(userTarget.getNbTrackPossible()+1);
+							
 							if (userTarget.getMinTrackTimeSec() > userTrace.calcTrackTimeInSec() ) 
 							{	
 								userTarget.setMinTrackTimeSec( userTrace.calcTrackTimeInSec());
